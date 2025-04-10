@@ -1,0 +1,27 @@
+
+
+I am using nix to build android applications to be sure that it is being built safely from the source code to the apk file.
+
+# Why though? Why not just use google play or even f-droid?
+
+I love nix and being able to build my packages and even my operating system in a pure and reproducible way is awesome. I want that for my android devices. But i find the state of development in the android worse than python 😭🙏.
+
+Goals:
+
+- Collect the list of open source famous android applications and games.
+- Create a derivation that builds those applications (also tests them if possible)
+- Use that derivation to generate the APK.
+- Then collect these APKs in a cache that could be used to serve those applications inside a static website.
+- Check all of the nixpkgs dependencies for reproducibility.
+- Check my own packages for reproducibility.
+
+
+Applications:
+- lichess
+- signal
+- tailscale
+- wikipedia
+- f-droid
+- mihon
+- mastodon
+- anki

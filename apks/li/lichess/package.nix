@@ -51,9 +51,6 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     description = "Lichess mobile app";
-    license = licenses.mit;
-    platforms = platforms.android;
-    maintainers = with maintainers; [ ];
   };
 
 }

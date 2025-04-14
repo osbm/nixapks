@@ -10,6 +10,7 @@
   in
   {
     packages.x86_64-linux.lichess = callPackage ./apks/li/lichess/package.nix { };
+    packages.x86_64-linux.wireguard = callPackage ./apks/wi/wireguard/package.nix { };
     packages.x86_64-linux.default = self.packages.x86_64-linux.lichess;
   };
 }

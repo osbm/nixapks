@@ -15,35 +15,18 @@ stdenv.mkDerivation rec {
 
 
   nativeBuildInputs = [
-    pkgs.androidenv
-    pkgs.androidsdk
-    pkgs.androidndk
-    pkgs.nodejs-18_x
     pkgs.yarn
   ];
   buildInputs = [
-    pkgs.androidenv
-    pkgs.androidsdk
-    pkgs.androidndk
-    pkgs.nodejs-18_x
     pkgs.yarn
   ];
 
   buildPhase = ''
-    export ANDROID_HOME=${pkgs.androidsdk}/libexec
-    export ANDROID_NDK_HOME=${pkgs.androidndk}/libexec
-    export PATH=$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH
-
-    yarn install
-    yarn android:build
-
-    # The APK is built in the android/app/build/outputs/apk/debug directory
-
-
+    cd $src
+    ./gradlew assembleRelease
   '';
 
   installPhase = ''
-    mkdir -p $out
     cp -r android/app/build/outputs/apk/debug/app-debug.apk $out/lichess.apk
 
   '';

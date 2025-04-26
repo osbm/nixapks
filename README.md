@@ -25,3 +25,6 @@ Applications:
 - mihon
 - mastodon
 - anki
+- bluesky-social/social-app 
+
+

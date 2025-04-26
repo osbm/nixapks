@@ -16,17 +16,9 @@ stdenv.mkDerivation rec {
 
 
   nativeBuildInputs = [
-    pkgs.androidenv
-    pkgs.androidsdk
-    pkgs.androidndk
-    pkgs.nodejs-18_x
     pkgs.yarn
   ];
   buildInputs = [
-    pkgs.androidenv
-    pkgs.androidsdk
-    pkgs.androidndk
-    pkgs.nodejs-18_x
     pkgs.yarn
   ];
 

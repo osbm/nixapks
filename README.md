@@ -30,3 +30,4 @@ Applications:
 Successful nix apk builds:
 - https://github.com/CrazyChaoz/Minimal-Android-UWB-App
 - https://github.com/iyox-studios/iyox-Wormhole
+- https://github.com/expenses/irohdroid

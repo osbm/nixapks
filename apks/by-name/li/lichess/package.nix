@@ -16,10 +16,7 @@ stdenv.mkDerivation rec {
 
 
   nativeBuildInputs = [
-    pkgs.yarn
-  ];
-  buildInputs = [
-    pkgs.yarn
+    pkgs.flutter
   ];
 
   buildPhase = ''

@@ -26,6 +26,7 @@ Applications:
 - mastodon
 - anki
 - bluesky-social/social-app 
+- smoking-durtles
 
 Successful nix apk builds:
 - https://github.com/CrazyChaoz/Minimal-Android-UWB-App

@@ -9,7 +9,10 @@
   outputs = { self, nixpkgs, ... }:
   let
     system = "x86_64-linux";
-    pkgs = import nixpkgs { inherit system; };
+    pkgs = import nixpkgs {
+      inherit system;
+      android_sdk.accept_license = true;
+    };
     callPackage = pkgs.callPackage;
     stdenv = pkgs.stdenv;
   in

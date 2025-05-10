@@ -6,7 +6,7 @@
     gradle2nix-flake.url = "github:tadfisher/gradle2nix/v2";
     gradle-dot-nix.url = "github:CrazyChaoz/gradle-dot-nix";
   };
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, ... }:
   let
     system = "x86_64-linux";
     pkgs = import nixpkgs { inherit system; };

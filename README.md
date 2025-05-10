@@ -32,3 +32,7 @@ Successful nix apk builds:
 - https://github.com/CrazyChaoz/Minimal-Android-UWB-App
 - https://github.com/iyox-studios/iyox-Wormhole
 - https://github.com/expenses/irohdroid
+
+
+Important tools:
+- https://github.com/CrazyChaoz/gradle-dot-nix : This flake can generate the full maven repo required to build a gradle app from gradle/verification-metadata.xml, all in the sandbox, without code generation.

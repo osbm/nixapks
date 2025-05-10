@@ -1,6 +1,11 @@
 {
   description = "Build android applications with nix";
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    android-nixpkgs.url = "github:HPRIOR/android-nixpkgs";
+    gradle2nix-flake.url = "github:tadfisher/gradle2nix/v2";
+    gradle-dot-nix.url = "github:CrazyChaoz/gradle-dot-nix";
+  };
   outputs = { self, nixpkgs }:
   let
     system = "x86_64-linux";

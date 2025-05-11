@@ -12,8 +12,11 @@ Goals:
 - Create a derivation that builds those applications (also tests them if possible)
 - Use that derivation to generate the APK.
 - Then collect these APKs in a cache that could be used to serve those applications inside a static website.
-- Check all of the nixpkgs dependencies for reproducibility.
 - Check my own packages for reproducibility.
+    - Get the list of all our dependencies for builds of all apks
+    - Check them for reproducibility
+    - Check our all derivations for reproducibility
+- No runtime dependencies (we are just producing a file)
 
 
 Applications:
@@ -25,7 +28,7 @@ Applications:
 - mihon
 - mastodon
 - anki
-- bluesky-social/social-app 
+- bluesky-social/social-app
 - smoking-durtles
 
 Successful nix apk builds:

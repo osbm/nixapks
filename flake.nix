@@ -19,7 +19,6 @@
   {
     packages.x86_64-linux.lichess = callPackage ./apks/by-name/li/lichess/package.nix { };
     packages.x86_64-linux.wireguard = callPackage ./apks/by-name/wi/wireguard/package.nix { };
-    packages.x86_64-linux.smoking-durtles = callPackage ./apks/by-name/sm/smoking-durtles/package.nix { };
-    packages.x86_64-linux.default = self.packages.x86_64-linux.lichess;
+    packages.x86_64-linux.smouldering_durtles = callPackage ./apks/by-name/sm/smouldering_durtles/package.nix { };
   };
 }

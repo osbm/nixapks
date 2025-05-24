@@ -35,6 +35,9 @@ Successful nix apk builds:
 - https://github.com/CrazyChaoz/Minimal-Android-UWB-App
 - https://github.com/iyox-studios/iyox-Wormhole
 - https://github.com/expenses/irohdroid
+- https://github.com/nix-community/robotnix/tree/master/apks/chromium
+- https://github.com/nix-community/robotnix/tree/463c3f66062a999cf339bc752501ae5906582df7/apks/fdroid
+- https://github.com/SpiralP/mobile_nebula
 
 
 Important tools:

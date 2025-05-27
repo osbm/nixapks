@@ -1,11 +1,10 @@
 {
   pkgs,
-  android-nixpkgs,
-  gradle-dot-nix,
+  inputs,
   ...
 }:
 let
-  android-sdk = android-nixpkgs.sdk.${pkgs.stdenv.hostPlatform.system} (
+  android-sdk = inputs.android-nixpkgs.sdk.${pkgs.stdenv.hostPlatform.system} (
     sdkPkgs: with sdkPkgs; [
       build-tools-34-0-0
       cmdline-tools-latest
@@ -14,12 +13,11 @@ let
     ]
   );
   gradle-init-script =
-    (import gradle-dot-nix {
+    (import inputs.gradle-dot-nix {
       inherit pkgs;
       gradle-verification-metadata-file = ./verification-metadata.xml;
     }).gradle-init;
 in
-
 pkgs.stdenv.mkDerivation rec {
   name = "smouldering-durtles-${version}.apk";
   version = "1.2.3";

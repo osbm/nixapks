@@ -29,7 +29,7 @@ Applications:
 - mastodon
 - anki
 - bluesky-social/social-app
-- smoking-durtles
+- smouldering_durtles
 
 Successful nix apk builds:
 - https://github.com/CrazyChaoz/Minimal-Android-UWB-App

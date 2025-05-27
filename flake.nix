@@ -6,22 +6,25 @@
     gradle2nix-flake.url = "github:tadfisher/gradle2nix/v2";
     gradle-dot-nix.url = "github:CrazyChaoz/gradle-dot-nix";
   };
-  outputs = { self, nixpkgs, ... }@inputs:
-  let
-    system = "x86_64-linux";
-    pkgs = import nixpkgs {
-      inherit system;
-      android_sdk.accept_license = true;
-    };
-    callPackage = pkgs.callPackage;
-    stdenv = pkgs.stdenv;
+  outputs =
+    { self, nixpkgs, ... }@inputs:
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs {
+        inherit system;
+        android_sdk.accept_license = true;
+      };
+      callPackage = pkgs.callPackage;
+      stdenv = pkgs.stdenv;
 
-  in
-  {
-    packages.x86_64-linux.lichess = callPackage ./apks/by-name/li/lichess/package.nix { };
-    packages.x86_64-linux.wireguard = callPackage ./apks/by-name/wi/wireguard/package.nix { };
-    packages.x86_64-linux.smouldering_durtles = callPackage ./apks/by-name/sm/smouldering_durtles/package.nix {
-      inherit (inputs) android-nixpkgs gradle-dot-nix;
+    in
+    {
+      packages.x86_64-linux.lichess = callPackage ./apks/by-name/li/lichess/package.nix { };
+      packages.x86_64-linux.wireguard = callPackage ./apks/by-name/wi/wireguard/package.nix { };
+      packages.x86_64-linux.smouldering_durtles =
+        callPackage ./apks/by-name/sm/smouldering_durtles/package.nix
+          {
+            inherit (inputs) android-nixpkgs gradle-dot-nix;
+          };
     };
-  };
 }

@@ -1,5 +1,4 @@
 {
-  lib,
   pkgs,
   android-nixpkgs,
   gradle-dot-nix,
@@ -8,7 +7,6 @@
 let
   android-sdk = android-nixpkgs.sdk.${pkgs.stdenv.hostPlatform.system} (
     sdkPkgs: with sdkPkgs; [
-      # Useful packages for building and testing.
       build-tools-34-0-0
       cmdline-tools-latest
       platform-tools

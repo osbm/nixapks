@@ -1,4 +1,4 @@
-{lib, pkgs, android-nixpkgs, gradle-dot-nix,...}: 
+{lib, pkgs, android-nixpkgs, gradle-dot-nix,...}:
 let
   android-sdk = android-nixpkgs.sdk.${pkgs.stdenv.hostPlatform.system} (sdkPkgs: with sdkPkgs; [
     # Useful packages for building and testing.

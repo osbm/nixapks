@@ -7,7 +7,7 @@ let
     platform-tools
     platforms-android-34
   ]);
-  gradle-init-script = 
+  gradle-init-script =
     (import gradle-dot-nix {
         inherit pkgs;
         gradle-verification-metadata-file = ./verification-metadata.xml;

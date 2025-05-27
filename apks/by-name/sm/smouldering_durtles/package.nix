@@ -21,7 +21,7 @@ let
 in
 
 pkgs.stdenv.mkDerivation rec {
-  name = "smouldering-durtles-apk";
+  name = "smouldering-durtles-${version}.apk";
   version = "1.2.3";
 
   src = pkgs.fetchFromGitHub {

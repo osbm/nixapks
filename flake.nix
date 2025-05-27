@@ -20,7 +20,7 @@
     in
     {
       packages.x86_64-linux.smouldering_durtles =
-        callPackage ./apks/by-name/sm/smouldering_durtles/package.nix
+        callPackage ./apks/sm/smouldering_durtles/package.nix
           {
             inherit (inputs) android-nixpkgs gradle-dot-nix;
           };

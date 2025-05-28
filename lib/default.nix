@@ -1,6 +1,10 @@
-{ pkgs, ... }:
 {
-  by-name-overlay =
+  pkgs,
+  inputs,
+  ...
+}:
+{
+  byNameOverlay =
     baseDirectory:
     let
       namesForShard =
@@ -12,5 +16,5 @@
         pkgs.lib.attrsets.mapAttrsToList namesForShard (builtins.readDir baseDirectory)
       );
     in
-    pkgs.lib.mapAttrs (name: _: pkgs.callPackage _ { }) packageFiles;
+    pkgs.lib.mapAttrs (name: _: pkgs.callPackage _ { inherit inputs; }) packageFiles;
 }

@@ -7,23 +7,18 @@
     gradle-dot-nix.url = "github:CrazyChaoz/gradle-dot-nix";
   };
   outputs =
-    {
-      self,
-      nixpkgs,
-      ...
-    }@inputs:
+    inputs:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs {
+      pkgs = import inputs.nixpkgs {
         inherit system;
         android_sdk.accept_license = true;
       };
+
+      myLib = pkgs.callPackage ./lib { inherit inputs; };
     in
     {
-      packages.x86_64-linux.smouldering_durtles =
-        pkgs.callPackage ./apks/sm/smouldering_durtles/package.nix
-          {
-            inherit inputs;
-          };
+      packages.x86_64-linux = myLib.byNameOverlay ./apks;
+      lib = myLib;
     };
 }

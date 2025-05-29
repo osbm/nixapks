@@ -5,12 +5,10 @@ labels: [
   "type: app request"
 ]
 body:
-  - type: textarea
-    id: basic_example
+  - type: input
+    id: source_url
     attributes:
-      label: "Basic Example"
-      description: Indicate here some basic examples of your feature.
-      placeholder: A few specific words about your feature request.
+      label: "Source URL (git, svn, etc)"
     validations:
       required: true
   - type: dropdown
@@ -22,11 +20,14 @@ body:
         - Flutter
         - React Native
         - Gradle (kotlin or java)
+        - Other
+      validations:
+        required: true
   - type: textarea
-    id: extra_information
+    id: additional_context
     attributes:
-      label: "Just give your extra information"
+      label: "Additional Context"
       description: Provide any additional information that might be useful.
-      placeholder: "Git source url, documentation, etc."
+      placeholder: "issues, documentation, etc."
     validations:
       required: false

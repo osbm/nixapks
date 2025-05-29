@@ -11,6 +11,8 @@ A repository of derivations that builds as much open source android applications
 - Write custom derivation to compile Gradle based applications.
 - Add flutter apps
 - When there is enough apps, ask to get this repository be added to the nix-community organization.
+- Add documentation
+- Check reproducibility
 
 ### Why though? Why not just use google play or even f-droid?
 

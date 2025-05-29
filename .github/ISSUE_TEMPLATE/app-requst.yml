@@ -17,7 +17,7 @@ body:
     id: framework
     attributes:
       label: Select the framework
-      multiple: true
+      multiple: false
       options:
         - Flutter
         - React Native
@@ -29,4 +29,4 @@ body:
       description: Provide any additional information that might be useful.
       placeholder: Any extra information that might be useful.
     validations:
-      required: true
+      required: false

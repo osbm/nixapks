@@ -23,7 +23,7 @@ body:
         - React Native
         - Gradle (kotlin or java)
   - type: textarea
-    id: Extra information
+    id: extra_information
     attributes:
       label: "Just give your extra information"
       description: Provide any additional information that might be useful.

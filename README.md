@@ -1,8 +1,18 @@
 
+# Nixapks
 
-I am using nix to build android applications to be sure that it is being built safely from the source code to the apk file.
+A repository of derivations that builds as much open source android applications as possible.
 
-# Why though? Why not just use google play or even f-droid?
+
+## Directories
+
+## Roadmap
+
+- Write custom derivation to compile Gradle based applications.
+- Add flutter apps
+- When there is enough apps, ask to get this repository be added to the nix-community organization.
+
+### Why though? Why not just use google play or even f-droid?
 
 I love nix and being able to build my packages and even my operating system in a pure and reproducible way is awesome. I want that for my android devices. But i find the state of development in the android worse than python 😭🙏.
 

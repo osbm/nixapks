@@ -21,8 +21,8 @@ body:
         - React Native
         - Gradle (kotlin or java)
         - Other
-      validations:
-        required: true
+    validations:
+      required: true
   - type: textarea
     id: additional_context
     attributes:

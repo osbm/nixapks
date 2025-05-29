@@ -27,6 +27,6 @@ body:
     attributes:
       label: "Just give your extra information"
       description: Provide any additional information that might be useful.
-      placeholder: Any extra information that might be useful.
+      placeholder: "Git source url, documentation, etc."
     validations:
       required: false

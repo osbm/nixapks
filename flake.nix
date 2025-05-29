@@ -3,7 +3,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     android-nixpkgs.url = "github:tadfisher/android-nixpkgs";
-    gradle2nix-flake.url = "github:tadfisher/gradle2nix/v2";
+    gradle2nix.url = "github:tadfisher/gradle2nix/v2";
     gradle-dot-nix.url = "github:CrazyChaoz/gradle-dot-nix";
   };
   outputs =

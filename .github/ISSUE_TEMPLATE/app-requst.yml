@@ -1,8 +1,8 @@
 name: "💡 App request"
 description: Create a new ticket for a new app request
-title: "💡 [REQUEST] - <title>"
+title: "💡 App request: <title>"
 labels: [
-  "question"
+  "type: app request"
 ]
 body:
   - type: textarea
@@ -13,19 +13,20 @@ body:
       placeholder: A few specific words about your feature request.
     validations:
       required: true
-  - type: textarea
-    id: drawbacks
+  - type: dropdown
+    id: framework
     attributes:
-      label: "Drawbacks"
-      description: What are the drawbacks/impacts of your feature request ?
-      placeholder: Identify the drawbacks and impacts while being neutral on your feature request
+      label: Select the framework
+      multiple: true
+      options:
+        - Flutter
+        - React Native
+        - Gradle (kotlin or java)
+  - type: textarea
+    id: Extra information
+    attributes:
+      label: "Just give your extra information"
+      description: Provide any additional information that might be useful.
+      placeholder: Any extra information that might be useful.
     validations:
       required: true
-  - type: textarea
-    id: unresolved_question
-    attributes:
-      label: "Unresolved questions"
-      description: What questions still remain unresolved ?
-      placeholder: Identify any unresolved issues.
-    validations:
-      required: false

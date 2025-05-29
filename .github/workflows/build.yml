@@ -2,7 +2,8 @@ name: Build apps to test the derivations
 
 on:
   workflow_dispatch:
-  push:
+  schedule:
+    - cron: '0 0 * * *' # Every day at midnight UTC
 
 jobs:
   build-sd-image:

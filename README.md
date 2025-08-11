@@ -31,3 +31,4 @@ Important tools:
 - https://github.com/CrazyChaoz/gradle-dot-nix : This flake can generate the full maven repo required to build a gradle app from gradle/verification-metadata.xml, all in the sandbox, without code generation.
 - https://github.com/tadfisher/gradle2nix :  Generate Nix expressions which build Gradle-based projects.
 - https://github.com/tadfisher/android-nixpkgs : All packages from the Android SDK repository, packaged with Nix.
+- gradle.fetchDeps : A tool to fetch Gradle dependencies and generate a Nix expression for them. This is used in nixpks to fetch the dependencies of the Gradle build system and generate deps.json files.

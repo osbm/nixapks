@@ -12,7 +12,11 @@
       system = "x86_64-linux";
       pkgs = import inputs.nixpkgs {
         inherit system;
-        android_sdk.accept_license = true;
+        config = {
+          allowUnfree = true;
+
+          android_sdk.accept_license = true;
+        };
       };
 
       myLib = pkgs.callPackage ./lib { inherit inputs; };

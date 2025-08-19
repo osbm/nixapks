@@ -1,3 +1,6 @@
+# Tailscale Android APK
+# Latest releases: https://github.com/tailscale/tailscale-android/releases
+# To get the hash: nix-prefetch-url --unpack https://github.com/tailscale/tailscale-android/archive/v{VERSION}.tar.gz
 {
   stdenv,
   fetchFromGitHub,
@@ -32,12 +35,14 @@ let
 in
 stdenv.mkDerivation (finalAttrs: rec {
   name = "tailscale-${version}.apk";
-  version = "1.80.1";
+  # TODO: Update version to latest release from https://github.com/tailscale/tailscale-android/releases
+  version = "1.78.1";
 
   src = fetchFromGitHub {
     owner = "tailscale";
     repo = "tailscale-android";
     rev = "v${version}";
+    # TODO: Update hash - run `nix-prefetch-url --unpack https://github.com/tailscale/tailscale-android/archive/v${version}.tar.gz`
     hash = "sha256-0000000000000000000000000000000000000000000=";
     leaveDotGit = true;
   };
@@ -82,6 +87,7 @@ stdenv.mkDerivation (finalAttrs: rec {
   };
 
   installPhase = ''
+    # TODO: Verify APK output path - might be app-universal-release-unsigned.apk or app-release.apk
     cp app/build/outputs/apk/release/app-release.apk $out
   '';
 })

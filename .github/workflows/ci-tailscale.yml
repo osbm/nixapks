@@ -1,9 +1,13 @@
-name: Build apps to test the derivations
+name: Test Tailscale Build and Generate Dependencies
 
 on:
   push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
 jobs:
-  build-sd-image:
+  test-tailscale-build:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -12,5 +16,37 @@ jobs:
       - name: Install Nix
         uses: cachix/install-nix-action@v31
 
-      - name: Build SD image
-        run: nix build -L '.#tailscale'
+      - name: Debug environment
+        run: |
+          echo "Working directory:"
+          pwd
+          echo "Repository contents:"
+          ls -la
+          echo "Tailscale package files:"
+          ls -la apks/ta/tailscale/
+          echo "Current deps.json:"
+          cat apks/ta/tailscale/deps.json
+
+      - name: Try to build Tailscale APK
+        run: |
+          echo "Attempting to build Tailscale APK..."
+          nix build -L '.#tailscale' || echo "Build failed, will try updateScript next"
+          
+      - name: Generate deps.json using updateScript
+        run: |
+          echo "Running mitmCache updateScript to generate deps.json..."
+          nix build -L '.#tailscale.mitmCache.updateScript' || echo "updateScript build failed"
+          if [ -f result ]; then
+            echo "Running updateScript..."
+            ./result || echo "updateScript execution failed"
+          fi
+          
+      - name: Show deps.json content after updateScript
+        run: |
+          echo "Current deps.json content:"
+          cat apks/ta/tailscale/deps.json | head -20
+          
+      - name: Try building again after deps.json update
+        run: |
+          echo "Attempting to build Tailscale APK again after deps.json update..."
+          nix build -L '.#tailscale'

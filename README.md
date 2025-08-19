@@ -6,6 +6,14 @@ A repository of derivations that builds as much open source android applications
 
 ## Directories
 
+Available APK packages:
+
+- **mihon** (`apks/mi/mihon/`) - A free and open source manga reader for Android
+- **smouldering_durtles** (`apks/sm/smouldering_durtles/`) - A third-party Android app for WaniKani
+- **tailscale** (`apks/ta/tailscale/`) - Tailscale VPN client for Android (🚧 needs version/hash update)
+
+To build a package: `nix build .#<package-name>`
+
 ## Roadmap
 
 - Write custom derivation to compile Gradle based applications.

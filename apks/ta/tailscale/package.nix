@@ -42,7 +42,12 @@ stdenv.mkDerivation (finalAttrs: rec {
     leaveDotGit = true;
   };
 
-  sourceRoot = "source/android";
+  postUnpack = ''
+    # Move android directory contents to source root for gradle
+    mv source/android/* source/
+    mv source/android/.* source/ 2>/dev/null || true
+    rmdir source/android
+  '';
 
   nativeBuildInputs = [
     gradle

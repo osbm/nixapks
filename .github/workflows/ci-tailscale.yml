@@ -27,26 +27,32 @@ jobs:
           echo "Current deps.json:"
           cat apks/ta/tailscale/deps.json
 
-      - name: Try to build Tailscale APK
+      - name: Build updateScript and run it
         run: |
-          echo "Attempting to build Tailscale APK..."
-          nix build -L '.#tailscale' || echo "Build failed, will try updateScript next"
+          echo "Building mitmCache updateScript..."
+          nix build -L '.#tailscale.mitmCache.updateScript'
           
-      - name: Generate deps.json using updateScript
+          echo "Running updateScript to generate deps.json..."
+          ./result
+          
+          echo "Checking if deps.json was updated:"
+          ls -la apks/ta/tailscale/deps.json
+          
+      - name: Show generated deps.json content
         run: |
-          echo "Running mitmCache updateScript to generate deps.json..."
-          nix build -L '.#tailscale.mitmCache.updateScript' || echo "updateScript build failed"
-          if [ -f result ]; then
-            echo "Running updateScript..."
-            ./result || echo "updateScript execution failed"
+          echo "Generated deps.json content:"
+          if [ -s apks/ta/tailscale/deps.json ]; then
+            echo "File size: $(wc -c < apks/ta/tailscale/deps.json) bytes"
+            head -50 apks/ta/tailscale/deps.json
+          else
+            echo "deps.json is empty or doesn't exist"
+            cat apks/ta/tailscale/deps.json
           fi
           
-      - name: Show deps.json content after updateScript
+      - name: Build Tailscale APK with populated deps.json
         run: |
-          echo "Current deps.json content:"
-          cat apks/ta/tailscale/deps.json | head -20
-          
-      - name: Try building again after deps.json update
-        run: |
-          echo "Attempting to build Tailscale APK again after deps.json update..."
+          echo "Building Tailscale APK with populated dependencies..."
           nix build -L '.#tailscale'
+          
+          echo "Build successful! Checking output:"
+          ls -la result*

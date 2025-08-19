@@ -32,13 +32,13 @@ let
 in
 stdenv.mkDerivation (finalAttrs: rec {
   name = "tailscale-${version}.apk";
-  version = "1.78.1";
+  version = "1.86.4";
 
   src = fetchFromGitHub {
     owner = "tailscale";
     repo = "tailscale-android";
-    rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    rev = "${version}-t3149aad97-g4ef0c869b";
+    hash = "sha256-5Rr59CQ3mu5wtj8PYbQora49+6dToXh6+3aiEyiIjXw=";
     leaveDotGit = true;
   };
 

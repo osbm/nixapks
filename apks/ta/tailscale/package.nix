@@ -42,6 +42,8 @@ stdenv.mkDerivation (finalAttrs: rec {
     leaveDotGit = true;
   };
 
+  sourceRoot = "source/android";
+
   nativeBuildInputs = [
     gradle
     git
@@ -82,6 +84,6 @@ stdenv.mkDerivation (finalAttrs: rec {
   };
 
   installPhase = ''
-    cp app/build/outputs/apk/release/app-*-release*.apk $out
+    cp build/outputs/apk/release/android-*-release*.apk $out
   '';
 })

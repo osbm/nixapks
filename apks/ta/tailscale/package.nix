@@ -70,6 +70,14 @@ stdenv.mkDerivation (finalAttrs: rec {
   preBuild = ''
     export TMPDIR=$(mktemp -d)
     export GRADLE_USER_HOME=$TMPDIR/.gradle
+    
+    # Create the tailscale.version file that the build expects
+    cat > ../tailscale.version << EOF
+VERSION_LONG="${version}"
+VERSION_SHORT="${version}"
+VERSION_GITREV="g4ef0c869b"
+EOF
+    
     # Ensure AAPT2 has a writable directory
     mkdir -p $TMPDIR/aapt2
     export AAPT2_DAEMON_DIR=$TMPDIR/aapt2
@@ -80,10 +88,9 @@ stdenv.mkDerivation (finalAttrs: rec {
 
   mitmCache = gradle.fetchDeps {
     pkg = finalAttrs.finalPackage.overrideAttrs (_: {
-      # Remove sourceRoot for deps generation to work from repo root
+      # For deps generation, work from repo root to handle the android subdirectory properly
       sourceRoot = null;
       postUnpack = ''
-        # Change to android directory for gradle operations
         cd source/android
         sourceRoot=$PWD
       '';
@@ -92,6 +99,6 @@ stdenv.mkDerivation (finalAttrs: rec {
   };
 
   installPhase = ''
-    cp build/outputs/apk/release/android-*-release*.apk $out
+    cp build/outputs/apk/release/android-release.apk $out
   '';
 })

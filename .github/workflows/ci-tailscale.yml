@@ -1,4 +1,4 @@
-name: Test Tailscale Build and Generate Dependencies
+name: Test Tailscale Build
 
 on:
   push:
@@ -24,35 +24,19 @@ jobs:
           ls -la
           echo "Tailscale package files:"
           ls -la apks/ta/tailscale/
-          echo "Current deps.json:"
-          cat apks/ta/tailscale/deps.json
+          echo "Current deps.json size:"
+          wc -c apks/ta/tailscale/deps.json
 
-      - name: Build updateScript and run it
+      - name: Test Tailscale APK build
         run: |
-          echo "Building mitmCache updateScript..."
-          nix build -L '.#tailscale.mitmCache.updateScript'
-          
-          echo "Running updateScript to generate deps.json..."
-          ./result
-          
-          echo "Checking if deps.json was updated:"
-          ls -la apks/ta/tailscale/deps.json
-          
-      - name: Show generated deps.json content
-        run: |
-          echo "Generated deps.json content:"
-          if [ -s apks/ta/tailscale/deps.json ]; then
-            echo "File size: $(wc -c < apks/ta/tailscale/deps.json) bytes"
-            head -50 apks/ta/tailscale/deps.json
-          else
-            echo "deps.json is empty or doesn't exist"
-            cat apks/ta/tailscale/deps.json
-          fi
-          
-      - name: Build Tailscale APK with populated deps.json
-        run: |
-          echo "Building Tailscale APK with populated dependencies..."
-          nix build -L '.#tailscale'
+          echo "Building Tailscale APK..."
+          nix build -L '.#tailscale' --max-jobs 2
           
           echo "Build successful! Checking output:"
           ls -la result*
+          
+          if [ -f result ]; then
+            echo "APK file details:"
+            file result
+            ls -lh result
+          fi

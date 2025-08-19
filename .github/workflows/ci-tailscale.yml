@@ -1,0 +1,16 @@
+name: Build apps to test the derivations
+
+on:
+  push:
+jobs:
+  build-sd-image:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Build SD image
+        run: nix build -L '.#tailscale'

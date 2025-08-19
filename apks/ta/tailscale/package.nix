@@ -42,12 +42,7 @@ stdenv.mkDerivation (finalAttrs: rec {
     leaveDotGit = true;
   };
 
-  postUnpack = ''
-    # Move android directory contents to source root for gradle
-    mv source/android/* source/
-    mv source/android/.* source/ 2>/dev/null || true
-    rmdir source/android
-  '';
+  sourceRoot = "source/android";
 
   nativeBuildInputs = [
     gradle
@@ -84,7 +79,15 @@ stdenv.mkDerivation (finalAttrs: rec {
   gradleBuildTask = "assembleRelease";
 
   mitmCache = gradle.fetchDeps {
-    pkg = finalAttrs;
+    pkg = finalAttrs.finalPackage.overrideAttrs (_: {
+      # Remove sourceRoot for deps generation to work from repo root
+      sourceRoot = null;
+      postUnpack = ''
+        # Change to android directory for gradle operations
+        cd source/android
+        sourceRoot=$PWD
+      '';
+    });
     data = ./deps.json;
   };
 

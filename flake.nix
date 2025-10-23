@@ -33,5 +33,75 @@
         in
         myLib.byNameOverlay ./apks
       );
+
+      devShells = forAllSystems (system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config = {
+              allowUnfree = true;
+              android_sdk.accept_license = true;
+            };
+          };
+          android-sdk = inputs.android-nixpkgs.sdk.${system} (
+            sdkPkgs: with sdkPkgs; [
+              build-tools-35-0-1
+              cmdline-tools-latest
+              platform-tools
+              platforms-android-35
+            ]
+          );
+        in
+        {
+          mihon-gradle-metadata = pkgs.mkShell {
+            name = "mihon-gradle-metadata-generator";
+
+            buildInputs = [
+              android-sdk
+              pkgs.gradle_8
+              pkgs.jdk21
+              pkgs.git
+            ];
+
+            shellHook = ''
+              export ANDROID_HOME="${android-sdk}/share/android-sdk"
+              export ANDROID_SDK_ROOT="$ANDROID_HOME"
+              export ANDROID_NDK_ROOT="$ANDROID_HOME/ndk-bundle"
+              export JDK_HOME="${pkgs.jdk21.home}"
+              export JAVA_HOME="${pkgs.jdk21.home}"
+
+              # Override AAPT2 to use the NixOS-compatible version
+              export GRADLE_OPTS="-Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/35.0.1/aapt2"
+
+              # Set up temporary directories
+              export TMPDIR=$(mktemp -d)
+              export GRADLE_USER_HOME=$TMPDIR/.gradle
+              mkdir -p $TMPDIR/aapt2
+              export AAPT2_DAEMON_DIR=$TMPDIR/aapt2
+
+              echo "===================================================="
+              echo "Mihon Gradle Metadata Generation Shell"
+              echo "===================================================="
+              echo ""
+              echo "ANDROID_HOME: $ANDROID_HOME"
+              echo "JDK_HOME: $JDK_HOME"
+              echo "GRADLE_OPTS: $GRADLE_OPTS"
+              echo "Gradle version: $(gradle --version | head -n 3)"
+              echo ""
+              echo "To generate the verification-metadata.xml file:"
+              echo ""
+              echo "  1. cd /home/osbm/Documents/temp/mihon"
+              echo "  2. gradle -M sha256 assembleRelease -x lint -x lintDebug -x lintRelease -Dorg.gradle.project.android.aapt2FromMavenOverride=\$ANDROID_HOME/build-tools/35.0.1/aapt2"
+              echo ""
+              echo "This will create gradle/verification-metadata.xml"
+              echo "Then copy it to the mihon package directory:"
+              echo ""
+              echo "  3. cp gradle/verification-metadata.xml /home/osbm/Documents/git/nixapks/apks/mi/mihon/"
+              echo ""
+              echo "===================================================="
+            '';
+          };
+        }
+      );
     };
 }

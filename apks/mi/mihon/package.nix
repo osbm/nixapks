@@ -32,7 +32,6 @@ let
 in
 stdenv.mkDerivation (finalAttrs: rec {
   name = "mihon-${version}.apk";
-  # pname = "mihon-${finalAttrs.version}.apk";
   version = "0.19.1";
 
   src = fetchFromGitHub {

@@ -15,6 +15,8 @@
         "x86_64-darwin"
         "aarch64-darwin"
       ];
+      # although i can only make x86_64-linux work right now
+      # but it should be possible to make others work in the future
       forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f system);
     in
     {

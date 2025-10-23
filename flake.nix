@@ -7,22 +7,29 @@
     gradle-dot-nix.url = "github:CrazyChaoz/gradle-dot-nix";
   };
   outputs =
-    inputs:
+    inputs@{ nixpkgs, android-nixpkgs, gradle2nix, gradle-dot-nix, ... }:
     let
-      system = "x86_64-linux";
-      pkgs = import inputs.nixpkgs {
-        inherit system;
-        config = {
-          allowUnfree = true;
-
-          android_sdk.accept_license = true;
-        };
-      };
-
-      myLib = pkgs.callPackage ./lib { inherit inputs; };
+      supportedSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
+      forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f system);
     in
     {
-      packages.x86_64-linux = myLib.byNameOverlay ./apks;
-      lib = myLib;
+      packages = forAllSystems (system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config = {
+              allowUnfree = true;
+              android_sdk.accept_license = true;
+            };
+          };
+          myLib = pkgs.callPackage ./lib { inherit inputs; };
+        in
+        myLib.byNameOverlay ./apks
+      );
     };
 }

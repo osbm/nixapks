@@ -19,7 +19,7 @@ let
     }).gradle-init;
 in
 pkgs.stdenv.mkDerivation rec {
-  name = "smouldering-durtles-${version}.apk";
+  name = "smouldering_durtles-${version}.apk";
   version = "1.2.3";
 
   src = pkgs.fetchFromGitHub {

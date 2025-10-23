@@ -1,63 +1,55 @@
 {
-  stdenv,
-  fetchFromGitHub,
-  gradle_8,
-  jdk21,
-  git,
-  androidenv,
+  pkgs,
+  inputs,
   ...
 }:
 let
-  gradle = gradle_8;
-  buildToolsVersion = "35.0.1";
-  platformVersion = "35";
-  androidComposition = androidenv.composeAndroidPackages {
-    buildToolsVersions = [ buildToolsVersion ];
-    platformToolsVersion = "35.0.2";
-    platformVersions = [ platformVersion ];
-    includeSystemImages = true;
-    systemImageTypes = [ "google_apis"];
-    abiVersions = [ "armeabi-v7a" "arm64-v8a" "x86_64" ];
-    extraLicenses = [
-      "android-sdk-license"
-      "android-googletv-license"
-      "android-sdk-arm-dbt-license"
-      "android-sdk-preview-license"
-      "google-gdk-license"
-      "intel-android-extra-license"
-      "intel-android-sysimage-license"
-      "mips-android-sysimage-license"
-    ];
-  };
+  android-sdk = inputs.android-nixpkgs.sdk.${pkgs.stdenv.hostPlatform.system} (
+    sdkPkgs: with sdkPkgs; [
+      build-tools-35-0-1
+      cmdline-tools-latest
+      platform-tools
+      platforms-android-35
+    ]
+  );
+  gradle-init-script =
+    (import inputs.gradle-dot-nix {
+      inherit pkgs;
+      gradle-verification-metadata-file = ./verification-metadata.xml;
+      public-maven-repos = ''
+        [
+            "https://dl.google.com/dl/android/maven2",
+            "https://repo.maven.apache.org/maven2",
+            "https://plugins.gradle.org/m2",
+            "https://maven.google.com",
+            "https://www.jitpack.io"
+        ]
+      '';
+    }).gradle-init;
 in
-stdenv.mkDerivation (finalAttrs: rec {
+pkgs.stdenv.mkDerivation rec {
   name = "mihon-${version}.apk";
   version = "0.19.1";
 
-  src = fetchFromGitHub {
+  src = pkgs.fetchFromGitHub {
     owner = "mihonapp";
     repo = "mihon";
     rev = "v${version}";
-    hash = "sha256-bmphTmtVcofzBDuVo0cp+0yjR/Yu/Ym4DqUC40879+k=";
+    hash = "sha256-uBUuI6FN7xyXia7dsr5QHm0klkVq1BEE2JSgwWCGGRY=";
     leaveDotGit = true;
   };
 
-  nativeBuildInputs = [
-    gradle
-    git
-    androidComposition.androidsdk
-  ];
-
-  buildInputs = [
-    git
-    jdk21
-  ];
-  ANDROID_HOME = "${androidComposition.androidsdk}/libexec/android-sdk";
+  JDK_HOME = "${pkgs.jdk21.home}";
+  ANDROID_HOME = "${android-sdk}/share/android-sdk";
   ANDROID_NDK_ROOT = "${ANDROID_HOME}/ndk-bundle";
-  GRADLE_OPTS = "-Dorg.gradle.project.android.aapt2FromMavenOverride=${ANDROID_HOME}/build-tools/${buildToolsVersion}/aapt2";
-  JDK_HOME = "${jdk21.home}";
 
-  gradleFlags = [ "-Dorg.gradle.project.android.aapt2FromMavenOverride=${ANDROID_HOME}/build-tools/${buildToolsVersion}/aapt2" "-Dfile.encoding=utf-8" "-Pandroid.buildType=release" "-Pandroid.testBuildType=release" "-Ptelemetry.enabled=false" ];
+  nativeBuildInputs = [
+    android-sdk
+    pkgs.gradle_8
+    pkgs.jdk21
+    pkgs.git
+  ];
+
   preBuild = ''
     export TMPDIR=$(mktemp -d)
     export GRADLE_USER_HOME=$TMPDIR/.gradle
@@ -66,16 +58,14 @@ stdenv.mkDerivation (finalAttrs: rec {
     export AAPT2_DAEMON_DIR=$TMPDIR/aapt2
   '';
 
-  gradleUpdateTask = "assembleRelease";
-  gradleBuildTask = "assembleRelease";
-
-  mitmCache = gradle.fetchDeps {
-    # inherit (finalAttrs) pname;
-    pkg = finalAttrs;
-    data = ./deps.json;
-  };
+  buildPhase = ''
+    gradle assembleRelease --info -I ${gradle-init-script} \
+      --offline --full-stacktrace -x lint -x lintDebug -x lintRelease \
+      -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/35.0.1/aapt2 \
+      -Dfile.encoding=utf-8 -Ptelemetry.enabled=false
+  '';
 
   installPhase = ''
     cp app/build/outputs/apk/release/app-universal-release-unsigned.apk $out
   '';
-})
+}

@@ -4,8 +4,6 @@
 A repository of derivations that builds as much open source android applications as possible.
 
 
-## Directories
-
 ## Roadmap
 
 - Write custom derivation to compile Gradle based applications.

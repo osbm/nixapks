@@ -46,6 +46,7 @@
           android-sdk = inputs.android-nixpkgs.sdk.${system} (
             sdkPkgs: with sdkPkgs; [
               build-tools-36-0-0
+              build-tools-35-0-0
               cmdline-tools-latest
               platform-tools
               platforms-android-36

@@ -46,6 +46,7 @@
           android-sdk = inputs.android-nixpkgs.sdk.${system} (
             sdkPkgs: with sdkPkgs; [
               build-tools-35-0-1
+              build-tools-35-0-0
               cmdline-tools-latest
               platform-tools
               platforms-android-35
@@ -53,8 +54,8 @@
           );
         in
         {
-          mihon-gradle-metadata = pkgs.mkShell {
-            name = "mihon-gradle-metadata-generator";
+          ankidroid-gradle-metadata = pkgs.mkShell {
+            name = "ankidroid-gradle-metadata-generator";
 
             buildInputs = [
               android-sdk
@@ -71,7 +72,7 @@
               export JAVA_HOME="${pkgs.jdk21.home}"
 
               # Override AAPT2 to use the NixOS-compatible version
-              export GRADLE_OPTS="-Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/35.0.1/aapt2"
+              export GRADLE_OPTS="-Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/35.0.0/aapt2"
 
               # Set up temporary directories
               export TMPDIR=$(mktemp -d)
@@ -80,7 +81,7 @@
               export AAPT2_DAEMON_DIR=$TMPDIR/aapt2
 
               echo "===================================================="
-              echo "Mihon Gradle Metadata Generation Shell"
+              echo "ankidroid Gradle Metadata Generation Shell"
               echo "===================================================="
               echo ""
               echo "ANDROID_HOME: $ANDROID_HOME"
@@ -90,13 +91,13 @@
               echo ""
               echo "To generate the verification-metadata.xml file:"
               echo ""
-              echo "  1. cd /home/osbm/Documents/temp/mihon"
+              echo "  1. cd /home/osbm/Documents/temp/ankidroid"
               echo "  2. gradle -M sha256 assembleRelease -x lint -x lintDebug -x lintRelease -Dorg.gradle.project.android.aapt2FromMavenOverride=\$ANDROID_HOME/build-tools/35.0.1/aapt2"
               echo ""
               echo "This will create gradle/verification-metadata.xml"
-              echo "Then copy it to the mihon package directory:"
+              echo "Then copy it to the ankidroid package directory:"
               echo ""
-              echo "  3. cp gradle/verification-metadata.xml /home/osbm/Documents/git/nixapks/apks/mi/mihon/"
+              echo "  3. cp gradle/verification-metadata.xml /home/osbm/Documents/git/nixapks/apks/an/ankidroid/"
               echo ""
               echo "===================================================="
             '';

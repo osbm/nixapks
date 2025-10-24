@@ -5,13 +5,27 @@ on:
     - cron: '0 0 * * *' # Every day at midnight UTC
   push:
 
+
 jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate app matrix
+        id: set-matrix
+        run: |
+          # Get all app names from apks directory structure
+          apps=$(find apks -mindepth 2 -maxdepth 2 -type d | sed 's|apks/[^/]*/||' | sort | jq -R -s -c 'split("\n")[:-1]')
+          echo "matrix={\"app-name\":$apps}" >> $GITHUB_OUTPUT
+
   build-app:
-    # use a matrix of (app, system, runner) so we build the appropriate
-    # flake output for the runner OS. this runs 4 jobs: two apps x two systems.
+    needs: generate-matrix
     strategy:
-      matrix:
-        app-name: [smouldering_durtles, mihon]
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

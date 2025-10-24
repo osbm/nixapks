@@ -4,17 +4,35 @@
 A repository of derivations that builds as much open source android applications as possible.
 
 
-## Roadmap
+# Tasks
 
-- Write custom derivation to compile Gradle based applications.
-- Add flutter apps
-- When there is enough apps, ask to get this repository be added to the nix-community organization.
-- Add documentation
-- Check reproducibility
+- [ ] After adding 10 different apps (they all can be successfully built) ask to migrate this repo to the nix-community org.
+- [x] Add CI that builds all apps on every commit.
+- [ ] Add first flutter app.
+- [ ] Add first react-native app.
+- [ ] Add first ionic app.
+- [ ] Add documentation on github pages.
+- [ ] Add binary cache
 
-### Why though? Why not just use google play or even f-droid?
 
-I love nix and being able to build my packages and even my operating system in a pure and reproducible way is awesome. I want that for my android devices. But i find the state of development in the android worse than python 😭🙏.
+- [ ] Design a proper meta field for the needs of android apps. 
+    - [ ] description
+    - [ ] license
+    - [ ] source
+    - [ ] main page
+    - [ ] maintainers
+    - [ ] minSdkVersion (explain what is this)
+    - [ ] targetSdkVersion (explain what is this)
+    - [ ] compileSdkVersion (explain what is this)
+    - [ ] buildToolsVersion (explain what is this)
+    - [ ] abi (list of supported abis: armeabi-v7a, arm64-v8a, x86, x86_64)
+    
+
+
+
+
+
+# Notes
 
 Successful nix apk builds:
 - https://github.com/CrazyChaoz/Minimal-Android-UWB-App

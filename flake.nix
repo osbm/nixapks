@@ -45,7 +45,6 @@
           };
           android-sdk = inputs.android-nixpkgs.sdk.${system} (
             sdkPkgs: with sdkPkgs; [
-              build-tools-35-0-1
               build-tools-35-0-0
               cmdline-tools-latest
               platform-tools
@@ -92,7 +91,7 @@
               echo "To generate the verification-metadata.xml file:"
               echo ""
               echo "  1. cd /home/osbm/Documents/temp/ankidroid"
-              echo "  2. gradle -M sha256 assembleRelease -x lint -x lintDebug -x lintRelease -Dorg.gradle.project.android.aapt2FromMavenOverride=\$ANDROID_HOME/build-tools/35.0.1/aapt2"
+              echo "  2. gradle -M sha256 assembleRelease -x lint -x lintDebug -x lintRelease -Dorg.gradle.project.android.aapt2FromMavenOverride=\$ANDROID_HOME/build-tools/35.0.0/aapt2"
               echo ""
               echo "This will create gradle/verification-metadata.xml"
               echo "Then copy it to the ankidroid package directory:"

@@ -91,7 +91,7 @@
               echo "To generate the verification-metadata.xml file:"
               echo ""
               echo "  1. cd /home/osbm/Documents/temp/ankidroid"
-              echo "  2. gradle -M sha256 assembleRelease -x lint -x lintDebug -x lintRelease -Dorg.gradle.project.android.aapt2FromMavenOverride=\$ANDROID_HOME/build-tools/35.0.0/aapt2"
+              echo "  2. gradle -M sha256 assemblePlayRelease -x lint -x lintDebug -x lintRelease -x test -x *Test* -Dorg.gradle.project.android.aapt2FromMavenOverride=\$ANDROID_HOME/build-tools/35.0.0/aapt2"
               echo ""
               echo "This will create gradle/verification-metadata.xml"
               echo "Then copy it to the ankidroid package directory:"

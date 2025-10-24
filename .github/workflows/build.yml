@@ -37,6 +37,9 @@ jobs:
       - name: Install Nix
         uses: cachix/install-nix-action@v31
 
+      - name: Setup magic nix cache (speed up builds)
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
       - name: Show flake outputs (debug)
         run: nix flake show
 

@@ -1,13 +1,17 @@
 name: Build apps to test the derivations
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: '0 0 * * *' # Every day at midnight UTC
+  push:
 
 jobs:
   build-sd-image:
     runs-on: ubuntu-24.04
+    # all 2 apps matrix smouldering durtles and mihon
+
+    matrix:
+      app: [smouldering_durtles, mihon]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -16,4 +20,4 @@ jobs:
         uses: cachix/install-nix-action@v31
 
       - name: Build SD image
-        run: nix build -L '.#smouldering_durtles'
+        run: nix build -L ".#${{ matrix.app }}"

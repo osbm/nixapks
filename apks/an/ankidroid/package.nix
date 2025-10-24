@@ -62,7 +62,7 @@ pkgs.stdenv.mkDerivation rec {
   buildPhase = ''
     gradle assembleRelease --info -I ${gradle-init-script} \
       --offline --full-stacktrace -x lint -x lintDebug -x lintRelease \
-      -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/35.0.1/aapt2 \
+      -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/35.0.0/aapt2 \
       -Dfile.encoding=utf-8
   '';
 

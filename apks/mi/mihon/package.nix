@@ -35,7 +35,7 @@ pkgs.stdenv.mkDerivation rec {
     owner = "mihonapp";
     repo = "mihon";
     rev = "v${version}";
-    hash = "sha256-uBUuI6FN7xyXia7dsr5QHm0klkVq1BEE2JSgwWCGGRY=";
+    hash = "sha256-CaZxJnD2wSQv0bIlu5E2LRG0tq1XNoNXpEVtUHfe7d4=";
     leaveDotGit = true;
   };
 

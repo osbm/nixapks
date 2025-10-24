@@ -60,7 +60,7 @@ pkgs.stdenv.mkDerivation rec {
   '';
 
   buildPhase = ''
-    gradle assemblePlayRelease --info -I ${gradle-init-script} \
+    gradle assembleDebug --info -I ${gradle-init-script} \
       --offline --full-stacktrace -x lint -x lintDebug -x lintRelease -x test \
       -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/35.0.0/aapt2 \
       -Dfile.encoding=utf-8

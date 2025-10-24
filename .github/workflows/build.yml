@@ -6,12 +6,13 @@ on:
   push:
 
 jobs:
-  build-sd-image:
-    runs-on: ubuntu-24.04
-    # all 2 apps matrix smouldering durtles and mihon
-
-    matrix:
-      app: [smouldering_durtles, mihon]
+  build-app:
+    # use a matrix of (app, system, runner) so we build the appropriate
+    # flake output for the runner OS. this runs 4 jobs: two apps x two systems.
+    strategy:
+      matrix:
+        app-name: [smouldering_durtles, mihon]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,5 +20,10 @@ jobs:
       - name: Install Nix
         uses: cachix/install-nix-action@v31
 
-      - name: Build SD image
-        run: nix build -L ".#${{ matrix.app }}"
+      - name: Show flake outputs (debug)
+        run: nix flake show
+
+      - name: Build package
+        run: |
+          # build the system-specific package produced by the flake
+          nix build -L ".#${{ matrix.app-name }}"

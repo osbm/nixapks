@@ -9,7 +9,7 @@ let
       build-tools-36-0-0
       cmdline-tools-latest
       platform-tools
-      platforms-android-36
+      platforms-android-34
     ]
   );
   gradle-init-script =

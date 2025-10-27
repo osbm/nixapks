@@ -50,6 +50,6 @@ pkgs.stdenv.mkDerivation rec {
       --offline --full-stacktrace -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/35.0.0/aapt2
   '';
   installPhase = ''
-    cp app/build/outputs/apk/release/app-release.apk $out
+    cp app/build/outputs/apk/foss/release/notes-11-foss-release-unsigned.apk $out
   '';
 }

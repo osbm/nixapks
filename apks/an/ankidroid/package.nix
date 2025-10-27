@@ -7,9 +7,10 @@ let
   android-sdk = inputs.android-nixpkgs.sdk.${pkgs.stdenv.hostPlatform.system} (
     sdkPkgs: with sdkPkgs; [
       build-tools-35-0-0
+      build-tools-36-0-0
       cmdline-tools-latest
       platform-tools
-      platforms-android-35
+      platforms-android-36
     ]
   );
   gradle-init-script =
@@ -62,7 +63,7 @@ pkgs.stdenv.mkDerivation rec {
   buildPhase = ''
     gradle assembleDebug --info -I ${gradle-init-script} \
       --offline --full-stacktrace -x lint -x lintDebug -x lintRelease -x test \
-      -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/35.0.0/aapt2 \
+      -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/36.0.0/aapt2 \
       -Dfile.encoding=utf-8
   '';
 

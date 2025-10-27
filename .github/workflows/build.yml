@@ -35,8 +35,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Nothing but nix
+        uses: wimpysworld/nothing-but-nix@main
+        with:
+          hatchet-protocol: rampage
+
       - name: Install Nix
         uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            build-dir = /nix/build
 
       - name: Setup magic nix cache (speed up builds)
         uses: DeterminateSystems/magic-nix-cache-action@main

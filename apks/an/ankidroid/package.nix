@@ -29,13 +29,13 @@ let
 in
 pkgs.stdenv.mkDerivation rec {
   name = "ankidroid-${version}.apk";
-  version = "2.22.3";
+  version = "2.23.0alpha5";
 
   src = pkgs.fetchFromGitHub {
     owner = "ankidroid";
     repo = "Anki-Android";
     rev = "v${version}";
-    hash = "sha256-ifCnWc1fucOeF9jHdtPTGz/AEOVCXvinB1kQIS3aOk4=";
+    hash = "sha256-XFhWQiHvwYkRERJhxqVHP/qWfzOBl/i7nx4vmmYK/vU=";
   };
 
   JDK_HOME = "${pkgs.jdk21.home}";

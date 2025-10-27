@@ -47,7 +47,8 @@ pkgs.stdenv.mkDerivation rec {
   ];
   buildPhase = ''
     gradle assembleFossRelease --info -I ${gradle-init-script} \
-      --offline --full-stacktrace -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/35.0.0/aapt2
+      --offline --no-daemon --full-stacktrace \
+      -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/35.0.0/aapt2
   '';
   installPhase = ''
     cp app/build/outputs/apk/foss/release/notes-11-foss-release-unsigned.apk $out

@@ -38,7 +38,8 @@ pkgs.stdenv.mkDerivation rec {
   ];
   buildPhase = ''
     gradle build --info -I ${gradle-init-script} \
-      --offline --full-stacktrace -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/34.0.0/aapt2
+      --offline --no-daemon --full-stacktrace \
+      -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/34.0.0/aapt2
   '';
   installPhase = ''
     cp app/build/outputs/apk/release/app-release.apk $out

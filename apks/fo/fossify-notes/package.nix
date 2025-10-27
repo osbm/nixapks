@@ -16,6 +16,15 @@ let
     (import inputs.gradle-dot-nix {
       inherit pkgs;
       gradle-verification-metadata-file = ./verification-metadata.xml;
+      public-maven-repos = ''
+        [
+            "https://dl.google.com/dl/android/maven2",
+            "https://repo.maven.apache.org/maven2",
+            "https://plugins.gradle.org/m2",
+            "https://maven.google.com",
+            "https://www.jitpack.io"
+        ]
+      '';
     }).gradle-init;
 in
 pkgs.stdenv.mkDerivation rec {

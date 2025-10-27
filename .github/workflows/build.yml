@@ -48,6 +48,10 @@ jobs:
 
       - name: Setup magic nix cache (speed up builds)
         uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          # i am going to fork ts just because of these two options
+          use-flakehub: disabled
+          diagnostic-endpoint: ""
 
       - name: Show flake outputs (debug)
         run: nix flake show

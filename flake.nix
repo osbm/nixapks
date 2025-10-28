@@ -71,9 +71,6 @@
               export JDK_HOME="${pkgs.jdk21.home}"
               export JAVA_HOME="${pkgs.jdk21.home}"
 
-              # Override AAPT2 to use the NixOS-compatible version
-              # export GRADLE_OPTS="-Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/35.0.0/aapt2"
-
               # Set up temporary directories
               export TMPDIR=$(mktemp -d)
               export GRADLE_USER_HOME=$TMPDIR/.gradle

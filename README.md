@@ -55,3 +55,10 @@ Important tools:
 - https://github.com/tadfisher/gradle2nix :  Generate Nix expressions which build Gradle-based projects.
 - https://github.com/tadfisher/android-nixpkgs : All packages from the Android SDK repository, packaged with Nix.
 - gradle.fetchDeps : A tool to fetch Gradle dependencies and generate a Nix expression for them. This is used in nixpks to fetch the dependencies of the Gradle build system and generate deps.json files.
+
+
+# License
+
+All the nix derivations in this repository are licensed under the MIT license. See the LICENSE file for details.
+
+This license does not apply to the android applications built using these derivations. Please refer to the respective application's source code repository for licensing information.

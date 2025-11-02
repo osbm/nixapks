@@ -25,6 +25,7 @@ $ nix build --print-out-paths github:osbm/nixapks#smouldering_durtles
     - [ ] minSdkVersion (explain what is this)
     - [ ] targetSdkVersion (explain what is this)
     - [ ] abi (list of supported abis: armeabi-v7a, arm64-v8a, x86, x86_64)
+    - [ ] packageName (the unique identifier of the app, e.g. com.example.app)
 
 ## Create checks 
 

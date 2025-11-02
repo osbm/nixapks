@@ -24,8 +24,6 @@ $ nix build --print-out-paths github:osbm/nixapks#smouldering_durtles
     - [ ] maintainers
     - [ ] minSdkVersion (explain what is this)
     - [ ] targetSdkVersion (explain what is this)
-    - [ ] compileSdkVersion (explain what is this)
-    - [ ] buildToolsVersion (explain what is this)
     - [ ] abi (list of supported abis: armeabi-v7a, arm64-v8a, x86, x86_64)
 
 ## Create checks 

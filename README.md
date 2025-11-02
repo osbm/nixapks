@@ -20,7 +20,6 @@ $ nix build --print-out-paths github:osbm/nixapks#smouldering_durtles
 - [ ] Design a proper meta field for the needs of android apps. 
     - [ ] description
     - [ ] license
-    - [ ] source
     - [ ] main page
     - [ ] maintainers
     - [ ] minSdkVersion (explain what is this)

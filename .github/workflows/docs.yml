@@ -1,0 +1,33 @@
+name: Build Documentation
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Build documentation with Nix
+        # Use bash because some Nix examples assume bash; the runner provides it.
+        run: |
+          # Build the documentation package from the flake. Adjust system if needed.
+          nix build .#packages.x86_64-linux.documentation --no-link
+
+      - name: Upload built docs
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: result

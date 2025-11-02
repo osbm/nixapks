@@ -1,0 +1,5 @@
+[book]
+title = "nixapks"
+authors = ["osbm"]
+description = "A collection of Nix derivations for Android APKs"
+

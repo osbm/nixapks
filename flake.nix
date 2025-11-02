@@ -30,8 +30,20 @@
             };
           };
           myLib = pkgs.callPackage ./lib { inherit inputs; };
+          base = myLib.byNameOverlay ./apks;
+          documentation = pkgs.stdenv.mkDerivation {
+            pname = "nixapks-docs";
+            version = "0.0.1";
+            src = ./docs;
+            buildInputs = with pkgs; [ mdbook ];
+            buildPhase = ''
+              mdbook build --dest-dir $out
+            '';
+          };
         in
-        myLib.byNameOverlay ./apks
+        # Merge the generated documentation package into the packages set so
+        # you can build it via `nix build .#packages.<system>.documentation`.
+        base // { documentation = documentation; }
       );
 
       devShells = forAllSystems (system:

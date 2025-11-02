@@ -47,16 +47,18 @@
             sdkPkgs: with sdkPkgs; [
               build-tools-36-0-0
               build-tools-35-0-0
+              build-tools-34-0-0
               cmdline-tools-latest
               platform-tools
-              # platforms-android-36
+              platforms-android-36
               platforms-android-34
+              platforms-android-35
             ]
           );
         in
         {
-          ankidroid-gradle-metadata = pkgs.mkShell {
-            name = "ankidroid-gradle-metadata-generator";
+          generate-gradle-metadata = pkgs.mkShell {
+            name = "gradle-metadata-generator";
 
             buildInputs = [
               android-sdk
@@ -78,10 +80,6 @@
               mkdir -p $TMPDIR/aapt2
               export AAPT2_DAEMON_DIR=$TMPDIR/aapt2
 
-              echo "===================================================="
-              echo "ankidroid Gradle Metadata Generation Shell"
-              echo "===================================================="
-              echo ""
               echo "ANDROID_HOME: $ANDROID_HOME"
               echo "JDK_HOME: $JDK_HOME"
               echo "GRADLE_OPTS: $GRADLE_OPTS"
@@ -89,15 +87,14 @@
               echo ""
               echo "To generate the verification-metadata.xml file:"
               echo ""
-              echo "  1. cd /home/osbm/Documents/temp/ankidroid"
-              echo "  2. gradle -M sha256 assemblePlayRelease -x lint -x lintDebug -x lintRelease -x test -Dorg.gradle.project.android.aapt2FromMavenOverride=\$ANDROID_HOME/build-tools/36.0.0/aapt2"
+              echo "  1. get the gradle task name that generates the release apk, e.g.:"
               echo ""
-              echo "This will create gradle/verification-metadata.xml"
-              echo "Then copy it to the ankidroid package directory:"
+              echo "     ./gradlew tasks --all | grep assemble"
               echo ""
-              echo "  3. cp gradle/verification-metadata.xml /home/osbm/Documents/git/nixapks/apks/an/ankidroid/"
+              echo "     (look for the one with 'Release' in the name)"
               echo ""
-              echo "===================================================="
+              echo "  2. gradle -M sha256 assemblePlayRelease -Dorg.gradle.project.android.aapt2FromMavenOverride=\$ANDROID_HOME/build-tools/36.0.0/aapt2"
+              echo ""
             '';
           };
         }

@@ -17,7 +17,7 @@ $ nix build --print-out-paths github:osbm/nixapks#smouldering_durtles
 - [ ] Add first ionic app.
 - [ ] Add documentation on github pages.
 - [ ] Add binary cache
-- [ ] Design a proper meta field for the needs of android apps. 
+- [ ] Design a proper meta field for the needs of android apps.
     - [ ] description
     - [ ] license
     - [ ] main page
@@ -27,7 +27,7 @@ $ nix build --print-out-paths github:osbm/nixapks#smouldering_durtles
     - [ ] abi (list of supported abis: armeabi-v7a, arm64-v8a, x86, x86_64)
     - [ ] packageName (the unique identifier of the app, e.g. com.example.app)
 
-## Create checks 
+## Create checks
 
 - [ ] Check if the apk can be installed (hopefully on multiple architectures)
 - [ ] Check the meta field

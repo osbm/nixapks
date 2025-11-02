@@ -44,4 +44,10 @@ pkgs.stdenv.mkDerivation rec {
   installPhase = ''
     cp app/build/outputs/apk/release/app-release.apk $out
   '';
+  meta = {
+    description = "Wanikani Android Client - japanese kanji learning platform";
+    homepage = "https://github.com/jerryhcooke/smouldering_durtles";
+    license = pkgs.lib.licenses.asl20;
+    maintainers = with pkgs.lib.maintainers; [ osbm ];
+  };
 }

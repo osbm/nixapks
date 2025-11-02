@@ -8,6 +8,7 @@
 - [Analyzing an APK File](analyzing-an-apk-file.md)
 - [Adding a New App](adding-a-new-app.md)
 - [Updating an App](updating-an-app.md)
+- [Derivation Metadata](derivation-metadata.md)
 <!--
 # Android Development with Nix
 

@@ -15,7 +15,7 @@ $ nix build --print-out-paths github:osbm/nixapks#smouldering_durtles
 - [ ] Add first flutter app.
 - [ ] Add first react-native app.
 - [ ] Add first ionic app.
-- [ ] Add documentation on github pages.
+- [x] Add documentation on github pages.
 - [ ] Add binary cache
 - [ ] Design a proper meta field for the needs of android apps.
     - [ ] description

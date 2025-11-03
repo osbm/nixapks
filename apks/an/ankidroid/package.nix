@@ -1,6 +1,7 @@
 {
   pkgs,
   inputs,
+  lib,
   ...
 }:
 let
@@ -70,4 +71,10 @@ pkgs.stdenv.mkDerivation rec {
   installPhase = ''
     cp AnkiDroid/build/outputs/apk/release/AnkiDroid-release-unsigned.apk $out
   '';
+  meta = {
+    description = "Anki flashcards on Android";
+    homepage = "https://ankidroid.org";
+    license = lib.licenses.gpl3;
+    maintainers = with lib.maintainers; [ osbm ];
+  };
 }

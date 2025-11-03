@@ -1,6 +1,7 @@
 {
   pkgs,
   inputs,
+  lib,
   ...
 }:
 let
@@ -68,4 +69,10 @@ pkgs.stdenv.mkDerivation rec {
   installPhase = ''
     cp app/build/outputs/apk/release/app-universal-release-unsigned.apk $out
   '';
+  meta = {
+    description = "An open source flashcard app for spaced repetition learning";
+    homepage = "https://mihon.app";
+    license = lib.licenses.asl20;
+    maintainers = with lib.maintainers; [ osbm ];
+  };
 }

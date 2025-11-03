@@ -1,6 +1,7 @@
 {
   pkgs,
   inputs,
+  lib,
   ...
 }:
 let
@@ -47,7 +48,7 @@ pkgs.stdenv.mkDerivation rec {
   meta = {
     description = "Wanikani Android Client - japanese kanji learning platform";
     homepage = "https://github.com/jerryhcooke/smouldering_durtles";
-    license = pkgs.lib.licenses.asl20;
-    maintainers = with pkgs.lib.maintainers; [ osbm ];
+    license = lib.licenses.asl20;
+    maintainers = with lib.maintainers; [ osbm ];
   };
 }

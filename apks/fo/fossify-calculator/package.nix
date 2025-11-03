@@ -1,6 +1,7 @@
 {
   pkgs,
   inputs,
+  lib,
   ...
 }:
 let
@@ -53,4 +54,10 @@ pkgs.stdenv.mkDerivation rec {
   installPhase = ''
     cp app/build/outputs/apk/foss/release/calculator-7-foss-release-unsigned.apk $out
   '';
+  meta = {
+    description = "Calculator app without ads";
+    homepage = "https://fossify.org";
+    license = lib.licenses.gpl3;
+    maintainers = with lib.maintainers; [ osbm ];
+  };
 }

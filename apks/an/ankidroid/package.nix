@@ -37,7 +37,7 @@ pkgs.stdenv.mkDerivation rec {
     owner = "ankidroid";
     repo = "Anki-Android";
     rev = "v${version}";
-    hash = "";
+    hash = "sha256-BfEB+1doqdfJ7f+jIitImgNrZiA1+7ly+gi1K3v5EpM=";
   };
 
   JDK_HOME = "${pkgs.jdk21.home}";

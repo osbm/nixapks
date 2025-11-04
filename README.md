@@ -8,33 +8,6 @@ $ nix build --print-out-paths github:osbm/nixapks#smouldering_durtles
 /nix/store/z796iq87azckb8nsajpv43g7ybadq47s-smouldering_durtles-1.2.3.apk
 ```
 
-# Todo
-
-- [ ] After adding 10 different apps (they all can be successfully built) ask to migrate this repo to the nix-community org.
-- [x] Add CI that builds all apps on every commit.
-- [ ] Add first flutter app.
-- [ ] Add first react-native app.
-- [ ] Add first ionic app.
-- [x] Add documentation on github pages.
-- [ ] Add binary cache
-- [ ] Design a proper meta field for the needs of android apps.
-    - [ ] description
-    - [ ] license
-    - [ ] main page
-    - [ ] maintainers
-    - [ ] minSdkVersion (explain what is this)
-    - [ ] targetSdkVersion (explain what is this)
-    - [ ] abi (list of supported abis: armeabi-v7a, arm64-v8a, x86, x86_64)
-    - [ ] packageName (the unique identifier of the app, e.g. com.example.app)
-
-## Create checks
-
-- [ ] Check if the apk can be installed (hopefully on multiple architectures)
-- [ ] Check the meta field
-- [ ] Check if the output derivation has any runtime dependencies (it should not)
-- [ ] Check if the app got an update (maybe from fdroid or github releases) and create a PR automatically.
-
-
 
 
 # Notes

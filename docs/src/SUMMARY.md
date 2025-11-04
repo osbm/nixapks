@@ -9,6 +9,9 @@
 - [Adding a New App](adding-a-new-app.md)
 - [Updating an App](updating-an-app.md)
 - [Derivation Metadata](derivation-metadata.md)
+- [Roadmap](roadmap.md)
+- [Basic Functional Coverage](functional-coverage.md)
+
 <!--
 # Android Development with Nix
 

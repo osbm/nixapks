@@ -11,6 +11,14 @@ body:
       label: "Source URL (git, svn, etc)"
     validations:
       required: true
+  - type: input
+    id: app_version
+    attributes:
+      label: "App Version"
+      description: Specify the version of the app you are requesting.
+      placeholder: "e.g., 1.0.0, 2.3.1"
+    validations:
+      required: true
   - type: dropdown
     id: framework
     attributes:

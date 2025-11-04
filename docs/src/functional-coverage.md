@@ -24,4 +24,8 @@ The idea is that we should be able to have all the basic functionalities of a sm
 - Social / communication (chat, video calls)
 - Off grid communication
 - Navigation / maps / GPS
+- Office suite / document editing
+- PDF viewer / reading
+- Terminal / command line access / emulator
+
 

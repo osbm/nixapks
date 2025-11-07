@@ -2,6 +2,9 @@
   pkgs,
   inputs,
   lib,
+  abi ? "arm64-v8a", # "armeabi-v7a", "x86", "x86_64"
+  flavor ? "full", # "amazon", "play"
+  # debug/release currently only debug
   ...
 }:
 let
@@ -30,7 +33,7 @@ let
     }).gradle-init;
 in
 pkgs.stdenv.mkDerivation rec {
-  name = "ankidroid-${version}.apk";
+  name = "ankidroid-${flavor}-${abi}-${version}.apk";
   version = "2.23.0alpha6";
 
   src = pkgs.fetchFromGitHub {
@@ -69,7 +72,7 @@ pkgs.stdenv.mkDerivation rec {
   '';
 
   installPhase = ''
-    cp AnkiDroid/build/outputs/apk/release/AnkiDroid-release-unsigned.apk $out
+    cp AnkiDroid/build/outputs/apk/${flavor}/debug/AnkiDroid-${flavor}-${abi}-debug.apk $out
   '';
   meta = {
     description = "Anki flashcards on Android";

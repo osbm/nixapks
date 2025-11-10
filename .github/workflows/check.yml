@@ -1,0 +1,29 @@
+name: Check the nixapks flake
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Nothing but nix
+        uses: wimpysworld/nothing-but-nix@main
+        with:
+          hatchet-protocol: rampage
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            build-dir = /nix/build
+
+      - name: Show flake outputs
+        run: nix flake show
+
+      - name: Run nix flake check
+        run: nix flake check

@@ -84,7 +84,7 @@
 
       meta = meta // {
         sourceProvenance = [
-          pkgs.lib.sourceTypes.binaryByteCode
+          pkgs.lib.sourceTypes.binaryBytecode
           pkgs.lib.sourceTypes.fromSource
         ];
       };

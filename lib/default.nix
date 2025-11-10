@@ -79,6 +79,14 @@
         )
         "APK ${name} is missing or has empty meta.android.abis field."
 
+        lib.warnIf
+        (pkg ? buildInputs && pkg.buildInputs != [ ])
+        "APK ${name} has buildInputs which may cause runtime dependencies. APKs should have no runtime dependencies."
+
+        lib.warnIf
+        (pkg ? propagatedBuildInputs && pkg.propagatedBuildInputs != [ ])
+        "APK ${name} has propagatedBuildInputs which will cause runtime dependencies. APKs should have no runtime dependencies."
+
         pkg
     ) packageFiles;
 }

@@ -28,7 +28,13 @@
       let
         pkg = pkgs'.callPackage path { inherit inputs; };
       in
-      lib.warnIf (!(pkg.meta ? description) || pkg.meta.description == null)
+      # check if the package out path ends with .apk or .aab
+      lib.throwIfNot
+        (pkgs'.lib.strings.hasSuffix ".apk" pkg.outPath || pkgs'.lib.strings.hasSuffix ".aab" pkg.outPath)
+        "APK ${name} has an outPath that does not end with .apk or .aab: ${pkg.outPath}"
+
+        lib.warnIf
+        (!(pkg.meta ? description) || pkg.meta.description == null)
         "APK ${name} is missing a meta.description field."
 
         lib.warnIf

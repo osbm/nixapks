@@ -5,9 +5,15 @@
     android-nixpkgs.url = "github:tadfisher/android-nixpkgs";
     gradle2nix.url = "github:tadfisher/gradle2nix/v2";
     gradle-dot-nix.url = "github:CrazyChaoz/gradle-dot-nix";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
   };
   outputs =
-    inputs@{ nixpkgs, android-nixpkgs, gradle2nix, gradle-dot-nix, ... }:
+    inputs@{
+      self,
+      nixpkgs,
+      treefmt-nix,
+      ...
+    }:
     let
       supportedSystems = [
         "x86_64-linux"
@@ -17,7 +23,14 @@
       ];
       # although i can only make x86_64-linux work right now
       # but it should be possible to make others work in the future
-      forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f system);
+      forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems f;
+      treefmtEval = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        treefmt-nix.lib.evalModule pkgs ./treefmt.nix
+      );
     in
     {
       packages = forAllSystems (system:
@@ -111,5 +124,10 @@
           };
         }
       );
+
+      formatter = forAllSystems (system: treefmtEval.${system}.config.build.wrapper);
+      checks = forAllSystems (system: {
+        formatting = treefmtEval.${system}.config.build.check self;
+      });
     };
 }

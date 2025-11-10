@@ -33,17 +33,37 @@
       );
     in
     {
-      packages = forAllSystems (system:
+      # Export lib overlay for external users to extend their lib with our builders
+      overlays.default =
+        _final: prev:
         let
-          pkgs = import nixpkgs {
+          builders = prev.callPackage ./lib/builders/gradle-dot-nix.nix { inherit inputs; };
+        in
+        {
+          lib = prev.lib // {
+            inherit (builders) buildGradleApk;
+          };
+        };
+
+      packages = forAllSystems (
+        system:
+        let
+          pkgsPlain = import nixpkgs {
             inherit system;
             config = {
               allowUnfree = true;
               android_sdk.accept_license = true;
             };
           };
-          myLib = pkgs.callPackage ./lib { inherit inputs; };
-          base = myLib.byNameOverlay ./apks;
+          pkgs = import nixpkgs {
+            inherit system;
+            config = {
+              allowUnfree = true;
+              android_sdk.accept_license = true;
+            };
+            overlays = [ inputs.self.overlays.default ];
+          };
+          lib = pkgsPlain.callPackage ./lib { inherit inputs; };
           documentation = pkgs.stdenv.mkDerivation {
             pname = "nixapks-docs";
             version = "0.0.1";
@@ -54,12 +74,11 @@
             '';
           };
         in
-        # Merge the generated documentation package into the packages set so
-        # you can build it via `nix build .#packages.<system>.documentation`.
-        base // { documentation = documentation; }
+        lib.byNameOverlay pkgs ./apks // { inherit documentation; }
       );
 
-      devShells = forAllSystems (system:
+      devShells = forAllSystems (
+        system:
         let
           pkgs = import nixpkgs {
             inherit system;

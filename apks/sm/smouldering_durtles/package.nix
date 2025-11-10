@@ -50,5 +50,6 @@ pkgs.stdenv.mkDerivation rec {
     homepage = "https://github.com/jerryhcooke/smouldering_durtles";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ osbm ];
+    android = { };
   };
 }

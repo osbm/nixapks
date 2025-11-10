@@ -28,8 +28,7 @@
       let
         pkg = pkgs'.callPackage path { inherit inputs; };
       in
-      lib.warnIf
-        (!(pkg.meta ? description) || pkg.meta.description == null)
+      lib.warnIf (!(pkg.meta ? description) || pkg.meta.description == null)
         "APK ${name} is missing a meta.description field."
 
         lib.warnIf

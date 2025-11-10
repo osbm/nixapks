@@ -83,7 +83,7 @@
       '';
 
       meta = meta // {
-        sourceProvance = [
+        sourceProvenance = [
           pkgs.lib.sourceTypes.binaryByteCode
           pkgs.lib.sourceTypes.fromSource
         ];

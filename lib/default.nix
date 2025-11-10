@@ -45,8 +45,8 @@
         "APK ${name} is missing a meta.license field."
 
         lib.warnIf
-        (!(pkg.meta ? sourceProvance) || pkg.meta.sourceProvance == null)
-        "APK ${name} is missing a meta.sourceProvance field."
+        (!(pkg.meta ? sourceProvenance) || pkg.meta.sourceProvenance == null)
+        "APK ${name} is missing a meta.sourceProvenance field."
 
         lib.warnIf
         (!(pkg.meta ? android) || pkg.meta.android == null)

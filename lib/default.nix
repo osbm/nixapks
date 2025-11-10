@@ -43,6 +43,32 @@
         (!(pkg.meta ? license) || pkg.meta.license == null)
         "APK ${name} is missing a meta.license field."
 
+        lib.warnIf
+        (!(pkg.meta ? android) || pkg.meta.android == null)
+        "APK ${name} is missing a meta.android field."
+
+        lib.warnIf
+        (pkg.meta ? android && (!(pkg.meta.android ? minSdk) || pkg.meta.android.minSdk == null))
+        "APK ${name} is missing meta.android.minSdk field."
+
+        lib.warnIf
+        (pkg.meta ? android && (!(pkg.meta.android ? targetSdk) || pkg.meta.android.targetSdk == null))
+        "APK ${name} is missing meta.android.targetSdk field."
+
+        lib.warnIf
+        (
+          pkg.meta ? android
+          && (!(pkg.meta.android ? applicationId) || pkg.meta.android.applicationId == null)
+        )
+        "APK ${name} is missing meta.android.applicationId field."
+
+        lib.warnIf
+        (
+          pkg.meta ? android
+          && (!(pkg.meta.android ? abis) || pkg.meta.android.abis == null || pkg.meta.android.abis == [ ])
+        )
+        "APK ${name} is missing or has empty meta.android.abis field."
+
         pkg
     ) packageFiles;
 }

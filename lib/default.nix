@@ -13,14 +13,36 @@
   byNameOverlay =
     pkgs': baseDirectory:
     let
+      inherit (pkgs') lib;
       namesForShard =
         shard: _:
-        pkgs'.lib.mapAttrs (name: _: baseDirectory + "/${shard}/${name}/package.nix") (
+        lib.mapAttrs (name: _: baseDirectory + "/${shard}/${name}/package.nix") (
           builtins.readDir (baseDirectory + "/${shard}")
         );
-      packageFiles = pkgs'.lib.mergeAttrsList (
-        pkgs'.lib.attrsets.mapAttrsToList namesForShard (builtins.readDir baseDirectory)
+      packageFiles = lib.mergeAttrsList (
+        lib.attrsets.mapAttrsToList namesForShard (builtins.readDir baseDirectory)
       );
     in
-    pkgs'.lib.mapAttrs (_name: path: pkgs'.callPackage path { inherit inputs; }) packageFiles;
+    lib.mapAttrs (
+      name: path:
+      let
+        pkg = pkgs'.callPackage path { inherit inputs; };
+      in
+      lib.warnIf (!(pkg.meta ? description) || pkg.meta.description == null)
+        "APK ${name} is missing a meta.description field."
+
+        lib.warnIf
+        (!(pkg.meta ? homepage) || pkg.meta.homepage == null)
+        "APK ${name} is missing a meta.homepage field."
+
+        lib.warnIf
+        (!(pkg.meta ? maintainers) || pkg.meta.maintainers == null)
+        "APK ${name} is missing a meta.maintainers field."
+
+        lib.warnIf
+        (!(pkg.meta ? license) || pkg.meta.license == null)
+        "APK ${name} is missing a meta.license field."
+
+        pkg
+    ) packageFiles;
 }

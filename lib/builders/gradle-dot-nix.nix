@@ -82,27 +82,11 @@
         cp ${apkPath} $out
       '';
 
-      meta =
-        lib.warnIf (!(meta ? description) || meta.description == null)
-          "APK ${pname} is missing a meta.description field."
-
-          lib.warnIf
-          (!(meta ? homepage) || meta.homepage == null)
-          "APK ${pname} is missing a meta.homepage field."
-
-          lib.warnIf
-          (!(meta ? maintainers) || meta.maintainers == null)
-          "APK ${pname} is missing a meta.maintainers field."
-
-          lib.warnIf
-          (!(meta ? license) || meta.license == null)
-          "APK ${pname} is missing a meta.license field."
-          meta
-        // {
-          sourceProvance = [
-            pkgs.lib.sourceTypes.binaryByteCode
-            pkgs.lib.sourceTypes.fromSource
-          ];
-        };
+      meta = meta // {
+        sourceProvance = [
+          pkgs.lib.sourceTypes.binaryByteCode
+          pkgs.lib.sourceTypes.fromSource
+        ];
+      };
     };
 }

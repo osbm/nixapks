@@ -51,5 +51,9 @@ pkgs.stdenv.mkDerivation rec {
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ osbm ];
     android = { };
+    sourceProvenance = [
+      lib.sourceTypes.binaryBytecode
+      lib.sourceTypes.fromSource
+    ];
   };
 }

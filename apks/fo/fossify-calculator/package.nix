@@ -59,5 +59,9 @@ pkgs.stdenv.mkDerivation rec {
     homepage = "https://fossify.org";
     license = lib.licenses.gpl3;
     maintainers = with lib.maintainers; [ osbm ];
+    sourceProvenance = [
+      lib.sourceTypes.binaryBytecode
+      lib.sourceTypes.fromSource
+    ];
   };
 }

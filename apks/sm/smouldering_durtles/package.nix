@@ -19,14 +19,14 @@ let
       gradle-verification-metadata-file = ./verification-metadata.xml;
     }).gradle-init;
 in
-pkgs.stdenv.mkDerivation rec {
-  name = "smouldering_durtles-${version}.apk";
+pkgs.stdenv.mkDerivation (finalAttrs: {
+  name = "smouldering_durtles-${finalAttrs.version}.apk";
   version = "1.2.3";
 
   src = pkgs.fetchFromGitHub {
     owner = "jerryhcooke";
     repo = "smouldering_durtles";
-    tag = "v${version}";
+    tag = "v${finalAttrs.version}";
     hash = "sha256-xk8xjvUCpHojwdoaBhiXPfX2Tm1iXF8pbphk/FFt1P0=";
   };
   JDK_HOME = "${pkgs.jdk21.home}";
@@ -45,15 +45,30 @@ pkgs.stdenv.mkDerivation rec {
   installPhase = ''
     cp app/build/outputs/apk/release/app-release.apk $out
   '';
+  passthru.tests.meta = lib.verifyApkMeta {
+    apk = finalAttrs.finalPackage;
+    sdk = android-sdk;
+  };
+
   meta = {
     description = "Wanikani Android Client - japanese kanji learning platform";
     homepage = "https://github.com/jerryhcooke/smouldering_durtles";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ osbm ];
-    android = { };
+    android = {
+      minSdk = 21;
+      targetSdk = 34;
+      applicationId = "com.smouldering_durtles.wk";
+      abis = [
+        "armeabi-v7a"
+        "arm64-v8a"
+        "x86"
+        "x86_64"
+      ];
+    };
     sourceProvenance = [
       lib.sourceTypes.binaryBytecode
       lib.sourceTypes.fromSource
     ];
   };
-}
+})

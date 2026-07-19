@@ -36,6 +36,8 @@
       meta ? { },
     }:
     let
+      inherit ((import ./verify-apk-meta.nix { inherit pkgs lib; })) verifyApkMeta;
+
       android-sdk = inputs.android-nixpkgs.sdk.${pkgs.stdenv.hostPlatform.system} androidSdkPackages;
 
       # Extract the build-tools version from androidSdkPackages
@@ -48,7 +50,7 @@
           public-maven-repos = mavenRepos;
         }).gradle-init;
     in
-    pkgs.stdenv.mkDerivation {
+    pkgs.stdenv.mkDerivation (finalAttrs: {
       name = "${pname}-${version}.apk";
       inherit version src;
 
@@ -82,11 +84,20 @@
         cp ${apkPath} $out
       '';
 
+      passthru = lib.optionalAttrs (meta ? android) {
+        tests.meta = verifyApkMeta {
+          apk = finalAttrs.finalPackage;
+          sdk = android-sdk;
+          inherit version;
+          inherit (meta) android;
+        };
+      };
+
       meta = meta // {
         sourceProvenance = [
           lib.sourceTypes.binaryBytecode
           lib.sourceTypes.fromSource
         ];
       };
-    };
+    });
 }

@@ -37,10 +37,12 @@
         _final: prev:
         let
           builders = prev.callPackage ./lib/builders/gradle-dot-nix.nix { inherit inputs; };
+          verifiers = prev.callPackage ./lib/builders/verify-apk-meta.nix { };
         in
         {
           lib = prev.lib // {
             inherit (builders) buildGradleApk;
+            inherit (verifiers) verifyApkMeta;
           };
         };
 

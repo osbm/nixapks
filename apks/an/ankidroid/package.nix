@@ -32,20 +32,20 @@ let
       '';
     }).gradle-init;
 in
-pkgs.stdenv.mkDerivation rec {
-  name = "ankidroid-${flavor}-${abi}-${version}.apk";
+pkgs.stdenv.mkDerivation (finalAttrs: {
+  name = "ankidroid-${flavor}-${abi}-${finalAttrs.version}.apk";
   version = "2.23.0alpha6";
 
   src = pkgs.fetchFromGitHub {
     owner = "ankidroid";
     repo = "Anki-Android";
-    rev = "v${version}";
+    rev = "v${finalAttrs.version}";
     hash = "sha256-BfEB+1doqdfJ7f+jIitImgNrZiA1+7ly+gi1K3v5EpM=";
   };
 
   JDK_HOME = "${pkgs.jdk21.home}";
   ANDROID_HOME = "${android-sdk}/share/android-sdk";
-  ANDROID_NDK_ROOT = "${ANDROID_HOME}/ndk-bundle";
+  ANDROID_NDK_ROOT = "${android-sdk}/share/android-sdk/ndk-bundle";
 
   nativeBuildInputs = [
     android-sdk
@@ -74,14 +74,26 @@ pkgs.stdenv.mkDerivation rec {
   installPhase = ''
     cp AnkiDroid/build/outputs/apk/${flavor}/debug/AnkiDroid-${flavor}-${abi}-debug.apk $out
   '';
+  passthru.tests.meta = lib.verifyApkMeta {
+    apk = finalAttrs.finalPackage;
+    sdk = android-sdk;
+  };
+
   meta = {
     description = "Anki flashcards on Android";
     homepage = "https://ankidroid.org";
     license = lib.licenses.gpl3;
     maintainers = with lib.maintainers; [ osbm ];
+    android = {
+      minSdk = 24;
+      targetSdk = 35;
+      # debug buildType, which applies an applicationIdSuffix
+      applicationId = "com.ichi2.anki.debug";
+      abis = [ abi ];
+    };
     sourceProvenance = [
       lib.sourceTypes.binaryBytecode
       lib.sourceTypes.fromSource
     ];
   };
-}
+})

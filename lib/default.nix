@@ -6,6 +6,7 @@
   # Overlay to extend lib with our custom functions
   libOverlay = _final: prev: {
     inherit ((prev.callPackage ./builders/gradle-dot-nix.nix { inherit inputs; })) buildGradleApk;
+    inherit ((prev.callPackage ./builders/verify-apk-meta.nix { })) verifyApkMeta;
   };
 
   # Auto-discover packages by directory structure

@@ -128,6 +128,7 @@
               pkgs.gradle_8
               pkgs.jdk21
               pkgs.git
+              pkgs.python3
             ];
 
             shellHook = ''

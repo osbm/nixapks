@@ -15,7 +15,11 @@
       # Gradle configuration
       gradleTask,
       gradleFlags ? [ ],
-      verificationMetadata,
+      # Per-app gradle verification metadata file. When null, the metadata is
+      # generated from the central lockfile (lib/maven-lock.json) instead —
+      # apps then need no per-app hash file at all.
+      verificationMetadata ? null,
+      mavenLock ? ../maven-lock.json,
       # APK output configuration
       apkPath,
       # Optional parameters
@@ -43,10 +47,46 @@
       # Extract the build-tools version from androidSdkPackages
       # We'll use the first build-tools package found
 
+      # Render the central lockfile into the verification-metadata.xml shape
+      # that gradle-dot-nix's parser consumes. The lock is a superset of all
+      # apps' dependencies; gradle's own resolution picks what it needs.
+      componentXml =
+        coordinate: files:
+        let
+          parts = lib.splitString ":" coordinate;
+        in
+        ''
+          <component group="${builtins.elemAt parts 0}" name="${builtins.elemAt parts 1}" version="${builtins.elemAt parts 2}">
+          ${lib.concatStrings (
+            lib.mapAttrsToList (fname: hash: ''
+              <artifact name="${fname}">
+                 <sha256 value="${hash}"/>
+              </artifact>
+            '') files
+          )}
+          </component>
+        '';
+
+      lockMetadataFile = pkgs.writeText "verification-metadata.xml" ''
+        <?xml version="1.0" encoding="UTF-8"?>
+        <verification-metadata xmlns="https://schema.gradle.org/dependency-verification" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://schema.gradle.org/dependency-verification https://schema.gradle.org/dependency-verification/dependency-verification-1.3.xsd">
+           <configuration>
+              <verify-metadata>true</verify-metadata>
+              <verify-signatures>false</verify-signatures>
+           </configuration>
+           <components>
+        ${lib.concatStrings (
+          lib.mapAttrsToList componentXml (builtins.fromJSON (builtins.readFile mavenLock))
+        )}
+           </components>
+        </verification-metadata>
+      '';
+
       gradle-init-script =
         (import inputs.gradle-dot-nix {
           inherit pkgs;
-          gradle-verification-metadata-file = verificationMetadata;
+          gradle-verification-metadata-file =
+            if verificationMetadata != null then verificationMetadata else lockMetadataFile;
           public-maven-repos = mavenRepos;
         }).gradle-init;
     in

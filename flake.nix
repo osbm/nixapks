@@ -73,15 +73,26 @@
             '';
           };
           apks = lib.byNameOverlay pkgs ./apks;
+          javaPackages = import ./java { pkgs = pkgsPlain; };
           all-apks = pkgsPlain.linkFarm "all-apks" (
             pkgsPlain.lib.mapAttrsToList (_: pkg: {
-              name = pkg.name; # already <pname>-<version>.apk
+              inherit (pkg) name; # already <pname>-<version>.apk
               path = pkg;
             }) apks
           );
         in
-        apks // { inherit documentation all-apks; }
+        apks
+        // {
+          inherit documentation all-apks;
+          inherit (javaPackages) maven-repo;
+        }
       );
+
+      # Source-built Java/Maven artifacts (nixjars, see java/README.md).
+      # Nested set, so exposed via legacyPackages: nix build .#javaPackages.jsoup
+      legacyPackages = forAllSystems (system: {
+        javaPackages = import ./java { pkgs = import nixpkgs { inherit system; }; };
+      });
 
       devShells = forAllSystems (
         system:

@@ -36,7 +36,9 @@
       actual_package=$(get "s/^package: name='\([^']*\)'.*/\1/p")
       actual_vname=$(get "s/.*versionName='\([^']*\)'.*/\1/p")
       actual_vcode=$(get "s/.*versionCode='\([^']*\)'.*/\1/p")
-      actual_minsdk=$(get "s/^sdkVersion:'\([^']*\)'.*/\1/p")
+      # older aapt2 prints sdkVersion:, newer prints minSdkVersion:
+      actual_minsdk=$(get "s/^minSdkVersion:'\([^']*\)'.*/\1/p")
+      test -n "$actual_minsdk" || actual_minsdk=$(get "s/^sdkVersion:'\([^']*\)'.*/\1/p")
       actual_targetsdk=$(get "s/^targetSdkVersion:'\([^']*\)'.*/\1/p")
       actual_abis=$(sed -n "s/^native-code: //p" badging.txt | tr -d "'" | tr ' ' '\n' | sort | xargs)
       test -n "$actual_abis" || actual_abis="universal"

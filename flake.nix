@@ -72,8 +72,15 @@
               mdbook build --dest-dir $out
             '';
           };
+          apks = lib.byNameOverlay pkgs ./apks;
+          all-apks = pkgsPlain.linkFarm "all-apks" (
+            pkgsPlain.lib.mapAttrsToList (_: pkg: {
+              name = pkg.name; # already <pname>-<version>.apk
+              path = pkg;
+            }) apks
+          );
         in
-        lib.byNameOverlay pkgs ./apks // { inherit documentation; }
+        apks // { inherit documentation all-apks; }
       );
 
       devShells = forAllSystems (

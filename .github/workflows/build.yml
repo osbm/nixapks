@@ -60,3 +60,9 @@ jobs:
         run: |
           # build the system-specific package produced by the flake
           nix build -L ".#${{ matrix.app-name }}"
+
+      - name: Verify APK against its declared meta.android
+        run: |
+          # tests.meta runs `aapt2 dump badging` on the built apk and fails
+          # on any mismatch with meta.android (see lib/builders/verify-apk-meta.nix)
+          nix build -L --print-out-paths ".#${{ matrix.app-name }}.tests.meta" | xargs cat

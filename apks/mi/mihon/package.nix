@@ -11,8 +11,7 @@ lib.buildGradleApk {
     owner = "mihonapp";
     repo = "mihon";
     rev = "v0.19.1";
-    hash = "sha256-CaZxJnD2wSQv0bIlu5E2LRG0tq1XNoNXpEVtUHfe7d4=";
-    leaveDotGit = true;
+    hash = "sha256-1B4NQFrSjFBeI0d3LptkgHqyn7ojf3PPcI9P+LeNTO4=";
   };
 
   androidSdkPackages =
@@ -25,13 +24,25 @@ lib.buildGradleApk {
 
   gradleTask = "assembleRelease";
   gradleFlags = [
-    "-x lint"
-    "-x lintDebug"
-    "-x lintRelease"
+    "-x"
+    "lint"
+    "-x"
+    "lintDebug"
+    "-x"
+    "lintRelease"
     "-Dorg.gradle.project.android.aapt2FromMavenOverride=\$ANDROID_HOME/build-tools/35.0.1/aapt2"
     "-Dfile.encoding=utf-8"
     "-Ptelemetry.enabled=false"
   ];
+
+  # Upstream derives these from the git repo at configure time (leaveDotGit
+  # is a reproducibility hazard, so we build from the plain tarball instead).
+  # Values pinned for v0.19.1: 7357 commits, tag commit 8e284a4.
+  preBuild = ''
+    substituteInPlace app/build.gradle.kts \
+      --replace-fail 'getCommitCount()' '"7357"' \
+      --replace-fail 'getGitSha()' '"8e284a4"'
+  '';
 
   verificationMetadata = ./verification-metadata.xml;
   apkPath = "app/build/outputs/apk/release/app-universal-release-unsigned.apk";

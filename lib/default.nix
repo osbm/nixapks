@@ -23,65 +23,47 @@
       packageFiles = lib.mergeAttrsList (
         lib.attrsets.mapAttrsToList namesForShard (builtins.readDir baseDirectory)
       );
+      # Required metadata for every in-tree APK. Missing fields are a hard
+      # eval error, not a warning: warnings scroll past unread.
+      requiredMeta = [
+        "description"
+        "homepage"
+        "maintainers"
+        "license"
+        "sourceProvenance"
+        "android"
+      ];
+      requiredAndroid = [
+        "minSdk"
+        "targetSdk"
+        "applicationId"
+        "abis"
+      ];
+
+      missingIn =
+        set: prefix: attrs:
+        map (a: "${prefix}${a}") (
+          builtins.filter (a: !(set ? ${a}) || set.${a} == null || set.${a} == [ ]) attrs
+        );
+
+      checkPackage =
+        name: pkg:
+        let
+          missing =
+            missingIn pkg.meta "meta." requiredMeta
+            ++ lib.optionals (pkg.meta ? android && pkg.meta.android != null) (
+              missingIn pkg.meta.android "meta.android." requiredAndroid
+            );
+        in
+        lib.throwIf (missing != [ ])
+          "APK ${name} is missing required fields: ${lib.concatStringsSep ", " missing}"
+          (
+            lib.warnIf (pkg.buildInputs or [ ] != [ ] || pkg.propagatedBuildInputs or [ ] != [ ])
+              "APK ${name} has (propagated)buildInputs which cause runtime dependencies. APKs should have none."
+              pkg
+          );
     in
     lib.mapAttrs (
-      name: path:
-      let
-        pkg = pkgs'.callPackage path { inherit inputs; };
-      in
-      lib.warnIf (!(pkg.meta ? description) || pkg.meta.description == null)
-        "APK ${name} is missing a meta.description field."
-
-        lib.warnIf
-        (!(pkg.meta ? homepage) || pkg.meta.homepage == null)
-        "APK ${name} is missing a meta.homepage field."
-
-        lib.warnIf
-        (!(pkg.meta ? maintainers) || pkg.meta.maintainers == null)
-        "APK ${name} is missing a meta.maintainers field."
-
-        lib.warnIf
-        (!(pkg.meta ? license) || pkg.meta.license == null)
-        "APK ${name} is missing a meta.license field."
-
-        lib.warnIf
-        (!(pkg.meta ? sourceProvenance) || pkg.meta.sourceProvenance == null)
-        "APK ${name} is missing a meta.sourceProvenance field."
-
-        lib.warnIf
-        (!(pkg.meta ? android) || pkg.meta.android == null)
-        "APK ${name} is missing a meta.android field."
-
-        lib.warnIf
-        (pkg.meta ? android && (!(pkg.meta.android ? minSdk) || pkg.meta.android.minSdk == null))
-        "APK ${name} is missing meta.android.minSdk field."
-
-        lib.warnIf
-        (pkg.meta ? android && (!(pkg.meta.android ? targetSdk) || pkg.meta.android.targetSdk == null))
-        "APK ${name} is missing meta.android.targetSdk field."
-
-        lib.warnIf
-        (
-          pkg.meta ? android
-          && (!(pkg.meta.android ? applicationId) || pkg.meta.android.applicationId == null)
-        )
-        "APK ${name} is missing meta.android.applicationId field."
-
-        lib.warnIf
-        (
-          pkg.meta ? android
-          && (!(pkg.meta.android ? abis) || pkg.meta.android.abis == null || pkg.meta.android.abis == [ ])
-        )
-        "APK ${name} is missing or has empty meta.android.abis field."
-
-        lib.warnIf
-        (pkg ? buildInputs && pkg.buildInputs != [ ])
-        "APK ${name} has buildInputs which may cause runtime dependencies. APKs should have no runtime dependencies."
-
-        lib.warnIf
-        (pkg ? propagatedBuildInputs && pkg.propagatedBuildInputs != [ ])
-        "APK ${name} has propagatedBuildInputs which will cause runtime dependencies. APKs should have no runtime dependencies."
-
-        pkg
+      name: path: checkPackage name (pkgs'.callPackage path { inherit inputs; })
     ) packageFiles;
 }

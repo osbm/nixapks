@@ -39,7 +39,7 @@ lib.buildGradleApk {
   extraNativeBuildInputs = [ pkgs.git ];
 
   meta = {
-    description = "An open source flashcard app for spaced repetition learning";
+    description = "Free and open source manga reader for Android";
     homepage = "https://mihon.app";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ osbm ];

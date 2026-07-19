@@ -22,9 +22,11 @@ The thing is, I am a very shitty developer. And my capabilities are extremely li
 - [ ] Support building apps on more platforms (currently only x86_64-linux is supported)
 - [ ] After adding 10 different apps (they all must be successfully built) ask to migrate this repo to the nix-community github organization.
 - [ ] Have base functional coverage [See functional-coverage](functional-coverage.md)
-- [ ] Check if the apk can be installed (hopefully on multiple architectures)
+- [x] Verify built apks against their declared metadata (`tests.meta` runs `aapt2 dump badging` and compares with `meta.android`, in CI for every app)
+- [ ] Design an APK signing mechanism: zipalign + apksigner wrapper with a user-supplied keystore, so outputs are actually installable. Then add `apksigner verify` to the apk verifier, and after that an emulator-based `adb install` smoke test.
+- [ ] Check if the apk can be installed (hopefully on multiple architectures) (blocked on signing, see above)
 - [ ] Check if the output derivation has any runtime dependencies (it should not)
 - [ ] Check if the app got an update (maybe from fdroid or github releases) and create a PR automatically.
 - [ ] Add binary cache
 - [ ] Prepare reproducibility report
-- [ ] Compile an application without using any maven repository (fetch all dependencies from their respective sources and compile them into jar files and feed the resulting jars to the apk build process) (this is probably impossible but worth a try)
+- [ ] Compile an application without using any maven repository (fetch all dependencies from their respective sources and compile them into jar files and feed the resulting jars to the apk build process) (this is probably impossible but worth a try) (in progress: see the [nixjars project](https://github.com/osbm/nixapks/tree/main/java) in `java/`)

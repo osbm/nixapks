@@ -115,13 +115,19 @@
       '';
 
       buildPhase = ''
+        runHook preBuild
+
         gradle ${gradleTask} --info -I ${gradle-init-script} \
           --offline --no-daemon --full-stacktrace \
           ${lib.concatStringsSep " " gradleFlags}
+
+        runHook postBuild
       '';
 
       installPhase = ''
+        runHook preInstall
         cp ${apkPath} $out
+        runHook postInstall
       '';
 
       passthru = lib.optionalAttrs (meta ? android) {

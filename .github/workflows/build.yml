@@ -29,6 +29,8 @@ jobs:
   build-app:
     needs: generate-matrix
     strategy:
+      # one broken app must not cancel the other builds
+      fail-fast: false
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     runs-on: ubuntu-latest
     steps:

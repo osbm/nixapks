@@ -3,7 +3,7 @@
   lib,
   ...
 }:
-lib.buildGradleApk {
+lib.buildGradleApkGradleDotNix {
   pname = "mihon";
   version = "0.19.1";
 

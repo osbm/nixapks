@@ -3,7 +3,7 @@
   lib,
   ...
 }:
-lib.buildGradleApk {
+lib.buildGradleApkCentralizedLock {
   pname = "fossify-paint";
   version = "1.4.0";
 

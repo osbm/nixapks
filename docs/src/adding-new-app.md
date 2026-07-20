@@ -54,11 +54,30 @@ nix build .#<app-name>.tests.meta
 This builds the apk and then checks it against `meta.android` using
 `aapt2 dump badging`. CI runs the same check for every app.
 
-### gradle2nix way
+### gradle2nix way (`buildGradleApkGradle2Nix`)
 
 Repository: https://github.com/tadfisher/gradle2nix
 
-TODO: Write this section.
+Generate a per-app `gradle.lock` by running the gradle2nix CLI against the
+app source (inside the `generate-gradle-metadata` devshell so the Android
+SDK is available):
+
+```bash
+nix run github:tadfisher/gradle2nix -- -t <releaseTask> --gradle-jdk "$JDK_HOME" \
+  -- -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/<version>/aapt2
+```
+
+Commit the resulting `gradle.lock` next to `package.nix` and call
+`lib.buildGradleApkGradle2Nix` with `lockFile = ./gradle.lock;` — see
+`apks/fo/fossify-thankyou/package.nix`. Unlike the verification-metadata
+methods, the lock records full artifact URLs alongside hashes.
+
+> This repo deliberately keeps several builder methods alive to compare
+> them (ease of adding/updating apps, breakage rate, readability). The
+> builder name in each package.nix identifies the method:
+> `buildGradleApkGradleDotNix` (per-app verification-metadata.xml),
+> `buildGradleApkCentralizedLock` (shared lib/maven-lock.json),
+> `buildGradleApkGradle2Nix` (per-app gradle.lock).
 
 ## React Native apps
 

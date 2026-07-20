@@ -37,11 +37,14 @@ lib.buildGradleApk {
 
   # Upstream derives these from the git repo at configure time (leaveDotGit
   # is a reproducibility hazard, so we build from the plain tarball instead).
-  # Values pinned for v0.19.1: 7357 commits, tag commit 8e284a4.
+  # Values pinned for v0.19.1: 7357 commits, commit 029e36b, committed
+  # 2025-08-07T13:59:01Z. Pinning BUILD_TIME also makes it deterministic.
   preBuild = ''
     substituteInPlace app/build.gradle.kts \
       --replace-fail 'getCommitCount()' '"7357"' \
-      --replace-fail 'getGitSha()' '"8e284a4"'
+      --replace-fail 'getGitSha()' '"029e36b"' \
+      --replace-fail 'getBuildTime(useLastCommitTime = true)' '"2025-08-07T13:59:01Z"' \
+      --replace-fail 'getBuildTime(useLastCommitTime = false)' '"2025-08-07T13:59:01Z"'
   '';
 
   verificationMetadata = ./verification-metadata.xml;
@@ -56,7 +59,8 @@ lib.buildGradleApk {
     maintainers = with lib.maintainers; [ osbm ];
     android = {
       minSdk = 26;
-      targetSdk = 36;
+      # v0.19.1 really targets 34 (verified against the apk by tests.meta)
+      targetSdk = 34;
       applicationId = "app.mihon";
       abis = [
         "armeabi-v7a"

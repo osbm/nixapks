@@ -4,7 +4,10 @@
   lib,
   ...
 }:
-{
+rec {
+  # Core gradle-dot-nix-based builder. Use the named variants below so each
+  # locking method is identifiable in package files (the repo deliberately
+  # keeps multiple methods alive to compare them).
   buildGradleApk =
     {
       pname,
@@ -146,4 +149,18 @@
         ];
       };
     });
+
+  # gradle-dot-nix with a per-app verification-metadata.xml
+  buildGradleApkGradleDotNix =
+    args:
+    lib.throwIfNot (args ? verificationMetadata)
+      "buildGradleApkGradleDotNix requires verificationMetadata; use buildGradleApkCentralizedLock for the central lockfile"
+      (buildGradleApk args);
+
+  # gradle-dot-nix fed from the central lib/maven-lock.json
+  buildGradleApkCentralizedLock =
+    args:
+    lib.throwIfNot (!(args ? verificationMetadata))
+      "buildGradleApkCentralizedLock uses lib/maven-lock.json; do not pass verificationMetadata (use buildGradleApkGradleDotNix for per-app metadata)"
+      (buildGradleApk args);
 }

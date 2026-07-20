@@ -3,7 +3,7 @@
   lib,
   ...
 }:
-lib.buildGradleApk {
+lib.buildGradleApkCentralizedLock {
   pname = "fossify-keyboard";
   version = "1.9.1";
 

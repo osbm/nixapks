@@ -67,4 +67,5 @@ jobs:
         run: |
           # tests.meta runs `aapt2 dump badging` on the built apk and fails
           # on any mismatch with meta.android (see lib/builders/verify-apk-meta.nix)
+          set -o pipefail  # without this a failed nix build is masked by xargs
           nix build -L --print-out-paths ".#${{ matrix.app-name }}.tests.meta" | xargs cat

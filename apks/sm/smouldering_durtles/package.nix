@@ -7,10 +7,10 @@
 let
   android-sdk = inputs.android-nixpkgs.sdk.${pkgs.stdenv.hostPlatform.system} (
     sdkPkgs: with sdkPkgs; [
-      build-tools-34-0-0
+      build-tools-36-0-0
       cmdline-tools-latest
       platform-tools
-      platforms-android-34
+      platforms-android-36
     ]
   );
   gradle-init-script =
@@ -21,26 +21,26 @@ let
 in
 pkgs.stdenv.mkDerivation (finalAttrs: {
   name = "smouldering_durtles-${finalAttrs.version}.apk";
-  version = "1.2.3";
+  version = "1.2.8";
 
   src = pkgs.fetchFromGitHub {
     owner = "jerryhcooke";
     repo = "smouldering_durtles";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-xk8xjvUCpHojwdoaBhiXPfX2Tm1iXF8pbphk/FFt1P0=";
+    hash = "sha256-OQuZA7SuKSRe8fP/0useLp0HVHp5aXlFvwx18nOkfX4=";
   };
   JDK_HOME = "${pkgs.jdk21.home}";
   ANDROID_HOME = "${android-sdk}/share/android-sdk";
 
   nativeBuildInputs = [
     android-sdk
-    pkgs.gradle_8
+    pkgs.gradle_9
     pkgs.jdk21
   ];
   buildPhase = ''
-    gradle build --info -I ${gradle-init-script} \
+    gradle assembleRelease --info -I ${gradle-init-script} \
       --offline --no-daemon --full-stacktrace \
-      -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/34.0.0/aapt2
+      -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/36.0.0/aapt2
   '';
   installPhase = ''
     cp app/build/outputs/apk/release/app-release.apk $out
@@ -57,8 +57,9 @@ pkgs.stdenv.mkDerivation (finalAttrs: {
     maintainers = with lib.maintainers; [ osbm ];
     android = {
       minSdk = 21;
-      targetSdk = 34;
+      targetSdk = 36;
       applicationId = "com.smouldering_durtles.wk";
+      versionCode = 89;
       abis = [
         "armeabi-v7a"
         "arm64-v8a"

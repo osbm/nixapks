@@ -23,8 +23,11 @@
       inherit (pkgs') lib;
       namesForShard =
         shard: _:
-        lib.mapAttrs (name: _: baseDirectory + "/${shard}/${name}/package.nix") (
-          builtins.readDir (baseDirectory + "/${shard}")
+        # Skip directories without a package.nix (work-in-progress apps).
+        lib.filterAttrs (_: builtins.pathExists) (
+          lib.mapAttrs (name: _: baseDirectory + "/${shard}/${name}/package.nix") (
+            builtins.readDir (baseDirectory + "/${shard}")
+          )
         );
       packageFiles = lib.mergeAttrsList (
         lib.attrsets.mapAttrsToList namesForShard (builtins.readDir baseDirectory)

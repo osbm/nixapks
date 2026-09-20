@@ -77,6 +77,8 @@ pkgs.stdenv.mkDerivation (finalAttrs: {
   passthru.tests.meta = lib.verifyApkMeta {
     apk = finalAttrs.finalPackage;
     sdk = android-sdk;
+    # debug buildType appends a versionNameSuffix
+    version = "${finalAttrs.version}-debug";
   };
 
   meta = {

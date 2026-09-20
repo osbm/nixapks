@@ -15,8 +15,8 @@ body:
     id: app_version
     attributes:
       label: "App Version"
-      description: Specify the version of the app you are requesting.
-      placeholder: "e.g., 1.0.0, 2.3.1"
+      description: Latest stable version at the time of the request, as a markdown link to the release tag. This is only a snapshot, the app will be packaged at whatever version is latest when the work is done.
+      placeholder: "e.g., [v1.0.0](https://github.com/owner/repo/releases/tag/v1.0.0)"
     validations:
       required: true
   - type: dropdown

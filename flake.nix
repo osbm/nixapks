@@ -110,59 +110,68 @@
           };
           android-sdk = inputs.android-nixpkgs.sdk.${system} (
             sdkPkgs: with sdkPkgs; [
+              build-tools-37-0-0
               build-tools-36-0-0
               build-tools-35-0-0
               build-tools-34-0-0
               cmdline-tools-latest
               platform-tools
+              platforms-android-37-0
               platforms-android-36
               platforms-android-34
               platforms-android-35
             ]
           );
+          # One shell per Gradle major: apps on AGP 9 need Gradle 9, and the
+          # metadata must be generated with the same Gradle the package builds
+          # with (its embedded Kotlin version ends up in the metadata).
+          mkMetadataShell =
+            gradle:
+            pkgs.mkShell {
+              name = "gradle-metadata-generator";
+
+              buildInputs = [
+                android-sdk
+                gradle
+                pkgs.jdk21
+                pkgs.git
+                pkgs.python3
+              ];
+
+              shellHook = ''
+                export ANDROID_HOME="${android-sdk}/share/android-sdk"
+                export ANDROID_SDK_ROOT="$ANDROID_HOME"
+                export ANDROID_NDK_ROOT="$ANDROID_HOME/ndk-bundle"
+                export JDK_HOME="${pkgs.jdk21.home}"
+                export JAVA_HOME="${pkgs.jdk21.home}"
+
+                # Set up temporary directories
+                export TMPDIR=$(mktemp -d)
+                export GRADLE_USER_HOME=$TMPDIR/.gradle
+                mkdir -p $TMPDIR/aapt2
+                export AAPT2_DAEMON_DIR=$TMPDIR/aapt2
+
+                echo "ANDROID_HOME: $ANDROID_HOME"
+                echo "JDK_HOME: $JDK_HOME"
+                echo "GRADLE_OPTS: $GRADLE_OPTS"
+                echo "Gradle version: $(gradle --version | head -n 3)"
+                echo ""
+                echo "To generate the verification-metadata.xml file:"
+                echo ""
+                echo "  1. get the gradle task name that generates the release apk, e.g.:"
+                echo ""
+                echo "     ./gradlew tasks --all | grep assemble"
+                echo ""
+                echo "     (look for the one with 'Release' in the name)"
+                echo ""
+                echo "  2. gradle -M sha256 assemblePlayRelease -Dorg.gradle.project.android.aapt2FromMavenOverride=\$ANDROID_HOME/build-tools/36.0.0/aapt2"
+                echo ""
+              '';
+            };
         in
         {
-          generate-gradle-metadata = pkgs.mkShell {
-            name = "gradle-metadata-generator";
-
-            buildInputs = [
-              android-sdk
-              pkgs.gradle_8
-              pkgs.jdk21
-              pkgs.git
-              pkgs.python3
-            ];
-
-            shellHook = ''
-              export ANDROID_HOME="${android-sdk}/share/android-sdk"
-              export ANDROID_SDK_ROOT="$ANDROID_HOME"
-              export ANDROID_NDK_ROOT="$ANDROID_HOME/ndk-bundle"
-              export JDK_HOME="${pkgs.jdk21.home}"
-              export JAVA_HOME="${pkgs.jdk21.home}"
-
-              # Set up temporary directories
-              export TMPDIR=$(mktemp -d)
-              export GRADLE_USER_HOME=$TMPDIR/.gradle
-              mkdir -p $TMPDIR/aapt2
-              export AAPT2_DAEMON_DIR=$TMPDIR/aapt2
-
-              echo "ANDROID_HOME: $ANDROID_HOME"
-              echo "JDK_HOME: $JDK_HOME"
-              echo "GRADLE_OPTS: $GRADLE_OPTS"
-              echo "Gradle version: $(gradle --version | head -n 3)"
-              echo ""
-              echo "To generate the verification-metadata.xml file:"
-              echo ""
-              echo "  1. get the gradle task name that generates the release apk, e.g.:"
-              echo ""
-              echo "     ./gradlew tasks --all | grep assemble"
-              echo ""
-              echo "     (look for the one with 'Release' in the name)"
-              echo ""
-              echo "  2. gradle -M sha256 assemblePlayRelease -Dorg.gradle.project.android.aapt2FromMavenOverride=\$ANDROID_HOME/build-tools/36.0.0/aapt2"
-              echo ""
-            '';
-          };
+          generate-gradle-metadata = mkMetadataShell pkgs.gradle_8;
+          generate-gradle-metadata-gradle9 = mkMetadataShell pkgs.gradle_9;
         }
       );
 

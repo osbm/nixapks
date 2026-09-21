@@ -26,6 +26,12 @@ where `<releaseTask>` is the task that assembles the release apk (find it
 with `./gradlew tasks --all | grep assemble`, e.g. `assembleFossRelease`).
 This writes `gradle/verification-metadata.xml` in the app's source tree.
 
+Apps on Android Gradle Plugin 9 need Gradle 9 (check
+`gradle/wrapper/gradle-wrapper.properties`): use the
+`generate-gradle-metadata-gradle9` devshell instead and set
+`gradle = pkgs.gradle_9;` in the package. Always generate the metadata with
+the same Gradle major the package builds with.
+
 ### 2. Merge it into the central lockfile
 
 ```bash

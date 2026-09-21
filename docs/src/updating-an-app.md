@@ -17,6 +17,17 @@
 4. `nix build .#<app>.tests.meta` — builds the apk and verifies its manifest
    against `meta.android`.
 
+## After `nix flake update`
+
+Rebuild every app before committing a lock bump
+(`nix build .#<app>.tests.meta`). Per-app `verification-metadata.xml` files
+record the artifacts of the Gradle version they were generated with —
+including Gradle's embedded Kotlin. When nixpkgs bumps `gradle_9`
+(e.g. 9.5 → 9.7) the build asks for artifacts that are not in the metadata
+(`Could not resolve org.jetbrains.kotlin:kotlin-stdlib:<new version>`).
+The fix is to regenerate the metadata in the matching devshell; the diff is
+usually a handful of lines.
+
 ## Hash conflicts in the lockfile
 
 The merge tool refuses to change a hash that is already locked:

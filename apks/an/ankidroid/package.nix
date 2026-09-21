@@ -54,6 +54,13 @@ pkgs.stdenv.mkDerivation (finalAttrs: {
     pkgs.git
   ];
 
+  # Upstream reads the commit hash from git at configure time; we build from
+  # the plain tarball (no .git), so pin it. Value for v2.24.1.
+  postPatch = ''
+    substituteInPlace AnkiDroid/build.gradle \
+      --replace-fail 'gitCommitHash.get()' '"9f579c10bb151146728220729c510acbbd8faba7"'
+  '';
+
   preBuild = ''
     export TMPDIR=$(mktemp -d)
     export GRADLE_USER_HOME=$TMPDIR/.gradle
@@ -68,7 +75,8 @@ pkgs.stdenv.mkDerivation (finalAttrs: {
     gradle assembleDebug --info -I ${gradle-init-script} \
       --offline --full-stacktrace -x lint -x lintDebug -x lintRelease -x test --no-daemon \
       -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/36.0.0/aapt2 \
-      -Dfile.encoding=utf-8
+      -Dfile.encoding=utf-8 \
+      -PbuildTime=1788209187
   '';
 
   installPhase = ''

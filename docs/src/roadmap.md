@@ -17,7 +17,7 @@ The thing is, I am a very shitty developer. And my capabilities are extremely li
 - [x] Check the meta field
 - [x] Add documentation on github pages.
 - [ ] Add first flutter app.
-- [ ] Add first react-native app.
+- [x] Add first react-native app. (bluesky)
 - [ ] Add first ionic app.
 - [ ] Support building apps on more platforms (currently only x86_64-linux is supported)
 - [ ] After adding 10 different apps (they all must be successfully built) ask to migrate this repo to the nix-community github organization.

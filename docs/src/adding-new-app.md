@@ -87,7 +87,38 @@ methods, the lock records full artifact URLs alongside hashes.
 
 ## React Native apps
 
-Not yet supported.
+There is no builder yet, only one worked example:
+`apks/bl/bluesky/package.nix` (an Expo app, React Native and Hermes built
+from source). It is a single offline derivation that runs, in order:
+
+1. `pnpm install` from `pkgs.fetchPnpmDeps` (via `pnpmConfigHook`; pnpm 11
+   needs `fetcherVersion = 4`).
+2. Any code generation upstream runs in `postinstall` (install scripts are
+   skipped), e.g. `lingui compile`.
+3. `expo prebuild --platform android --no-install` — works offline, the
+   template comes from `node_modules`.
+4. `gradle :app:assembleRelease --offline` with a gradle-dot-nix init script,
+   exactly like the Gradle apps above.
+
+Things that differ from a plain Gradle app:
+
+- Generate `verification-metadata.xml` from the *prebuilt* tree (after
+  steps 1-3), running `gradle -M sha256 :app:assembleRelease` inside
+  `android/`. The Android SDK needs the NDK and usually two CMake versions
+  (ReactAndroid wants 3.30.5, third-party libraries 3.22.1).
+- ReactAndroid downloads source tarballs (boost, folly, glog, fmt,
+  double-conversion, fast_float, hermes). Fetch them with `fetchurl` and
+  point `REACT_NATIVE_DOWNLOADS_DIR` at a directory holding them under the
+  exact file names ReactAndroid expects.
+- Expo modules ship prebuilt AARs in `node_modules/*/local-maven-repo`.
+  They appear in the metadata but cannot be downloaded: copy those
+  directories into a derivation and pass it as gradle-dot-nix's
+  `local-maven-repos`.
+- Set `LANG`/`LC_ALL` to `C.UTF-8`, otherwise Gradle cannot unpack boost
+  (`MalformedInputException`).
+- Expect a slow cold build: bluesky has ~3900 maven artifacts, which
+  gradle-dot-nix turns into ~7900 tiny derivations (1.5-2 h of fetching
+  before a ~9 min compile). Warm rebuilds only pay for the compile.
 
 ## Flutter apps
 

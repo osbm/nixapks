@@ -34,13 +34,13 @@ let
 in
 pkgs.stdenv.mkDerivation (finalAttrs: {
   name = "ankidroid-${flavor}-${abi}-${finalAttrs.version}.apk";
-  version = "2.23.0alpha6";
+  version = "2.24.1";
 
   src = pkgs.fetchFromGitHub {
     owner = "ankidroid";
     repo = "Anki-Android";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-BfEB+1doqdfJ7f+jIitImgNrZiA1+7ly+gi1K3v5EpM=";
+    hash = "sha256-wcw0bt1/4WYQpGSdqbbDd/w7z0KUj0SjAsaHJkzIPO8=";
   };
 
   JDK_HOME = "${pkgs.jdk21.home}";
@@ -49,7 +49,7 @@ pkgs.stdenv.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [
     android-sdk
-    pkgs.gradle_8
+    pkgs.gradle_9
     pkgs.jdk21
     pkgs.git
   ];

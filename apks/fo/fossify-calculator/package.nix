@@ -10,7 +10,7 @@ let
       build-tools-35-0-0
       cmdline-tools-latest
       platform-tools
-      platforms-android-34
+      platforms-android-36
     ]
   );
   gradle-init-script =
@@ -30,13 +30,13 @@ let
 in
 pkgs.stdenv.mkDerivation (finalAttrs: {
   name = "fossify-calculator-${finalAttrs.version}.apk";
-  version = "1.1.0";
+  version = "1.4.0";
 
   src = pkgs.fetchFromGitHub {
     owner = "FossifyOrg";
     repo = "Calculator";
     tag = finalAttrs.version;
-    hash = "sha256-jpPZGFDmn/EVMSEPOXNLAg/PYFMkP/V6+R/pW2h41Vs=";
+    hash = "sha256-emMTUn7mb3Y6OX60N3KK/RVdTxXxvcny0s4K0ERVrAA=";
   };
   JDK_HOME = "${pkgs.jdk21.home}";
   ANDROID_HOME = "${android-sdk}/share/android-sdk";
@@ -52,7 +52,7 @@ pkgs.stdenv.mkDerivation (finalAttrs: {
       -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/35.0.0/aapt2
   '';
   installPhase = ''
-    cp app/build/outputs/apk/foss/release/calculator-7-foss-release-unsigned.apk $out
+    cp app/build/outputs/apk/foss/release/calculator-10-foss-release-unsigned.apk $out
   '';
   passthru.tests.meta = lib.verifyApkMeta {
     apk = finalAttrs.finalPackage;
@@ -66,10 +66,10 @@ pkgs.stdenv.mkDerivation (finalAttrs: {
     maintainers = with lib.maintainers; [ osbm ];
     android = {
       minSdk = 26;
-      targetSdk = 34;
+      targetSdk = 36;
       # upstream APP_ID really is org.fossify.math
       applicationId = "org.fossify.math";
-      versionCode = 7;
+      versionCode = 10;
       abis = [
         "armeabi-v7a"
         "arm64-v8a"

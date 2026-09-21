@@ -1,0 +1,11 @@
+--- a/default.nix
++++ b/default.nix
+@@ -76,7 +76,7 @@
+           nativeBuildInputs = [ pkgs.python3 pkgs.python3Packages.requests ];
+           inherit impureEnvVars;
+           installPhase = ''
+-            local=$(find ${local-repos-string} -name '${unique-dependency.artifact_name}' -type f -print -quit)
++            local=$(find ${local-repos-string} -name '${unique-dependency.module_file.artifact_name}' -type f -print -quit)
+             if [[ $local ]]; then
+               cp $local $out
+             else

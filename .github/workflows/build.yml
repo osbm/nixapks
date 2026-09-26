@@ -4,35 +4,85 @@ on:
   schedule:
     - cron: '0 0 * * *' # Every day at midnight UTC
   push:
+    branches:
+      - main
+    paths-ignore: &no-apk-impact
+      - 'docs/**'
+      - '**.md'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/dependabot.yml'
+  pull_request:
+    paths-ignore: *no-apk-impact
   workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  ATTIC_CACHE: nixapks
+  # reached over tailscale, the tailnet ACL lets tag:ci see port 7080 only
+  ATTIC_ENDPOINT: http://pochita.curl-boga.ts.net:7080
+
 jobs:
   generate-matrix:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+      any: ${{ steps.set-matrix.outputs.any }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Generate app matrix
         id: set-matrix
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
         run: |
-          # Get all app names from apks directory structure
-          apps=$(find apks -mindepth 2 -maxdepth 2 -type d | sed 's|apks/[^/]*/||' | sort | jq -R -s -c 'split("\n")[:-1]')
-          echo "matrix={\"app-name\":$apps}" >> $GITHUB_OUTPUT
+          all_apps() { find apks -mindepth 2 -maxdepth 2 -type d | sed 's|apks/[^/]*/||' | sort; }
+
+          case "$EVENT" in
+            push) base="$BEFORE" ;;
+            pull_request) base="$PR_BASE" ;;
+            *) base="" ;; # schedule and manual runs build everything
+          esac
+
+          # no usable base commit (first push of a branch, force push): build everything
+          if [ -z "$base" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            apps=$(all_apps)
+          else
+            changed=$(git diff --name-only "$base" HEAD)
+            # anything outside apks/ that got past paths-ignore (lib, flake, java,
+            # this workflow) can affect every app
+            if echo "$changed" | grep -qv '^apks/'; then
+              apps=$(all_apps)
+            else
+              # apks/<xx>/<app>/... -> <app>, skipping apps deleted by this change
+              apps=$(echo "$changed" | awk -F/ '{print $2"/"$3}' | sort -u \
+                | while read -r d; do [ -d "apks/$d" ] && basename "$d"; done)
+            fi
+          fi
+
+          json=$(printf '%s' "$apps" | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          echo "building: $json"
+          echo "matrix={\"app-name\":$json}" >> "$GITHUB_OUTPUT"
+          echo "any=$([ "$json" = "[]" ] && echo false || echo true)" >> "$GITHUB_OUTPUT"
 
   build-app:
     needs: generate-matrix
+    if: needs.generate-matrix.outputs.any == 'true'
     strategy:
       # one broken app must not cancel the other builds
       fail-fast: false
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     runs-on: ubuntu-latest
+    env:
+      # empty on fork and dependabot PRs (no secrets there): those build uncached
+      ATTIC_TOKEN: ${{ secrets.ATTIC_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -48,15 +98,23 @@ jobs:
           extra_nix_config: |
             build-dir = /nix/build
 
-      - name: Setup magic nix cache (speed up builds)
-        uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Join the tailnet
+        if: env.ATTIC_TOKEN != ''
+        uses: tailscale/github-action@v3
         with:
-          # i am going to fork ts just because of these two options
-          use-flakehub: disabled
-          diagnostic-endpoint: ""
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          hostname: runner-github-nixapks
 
-      - name: Show flake outputs (debug)
-        run: nix flake show
+      - name: Use the attic cache
+        if: env.ATTIC_TOKEN != ''
+        run: |
+          # "via DERP" here means the link to pochita is relayed and will be slow
+          tailscale ping -c 3 pochita || true
+          nix profile install --inputs-from . nixpkgs#attic-client
+          attic login ci "$ATTIC_ENDPOINT" "$ATTIC_TOKEN"
+          attic use "ci:$ATTIC_CACHE"
 
       - name: Build package
         run: |
@@ -69,3 +127,16 @@ jobs:
           # on any mismatch with meta.android (see lib/builders/verify-apk-meta.nix)
           set -o pipefail  # without this a failed nix build is masked by xargs
           nix build -L --print-out-paths ".#${{ matrix.app-name }}.tests.meta" | xargs cat
+
+      - name: Push to the attic cache
+        # pull requests only read the cache, they never write to it
+        if: env.ATTIC_TOKEN != '' && github.event_name != 'pull_request'
+        run: |
+          # push the whole build closure, not just the apk: the thousands of
+          # maven dependency fetches are what makes a rebuild slow. paths that
+          # cache.nixos.org already serves are skipped by attic.
+          drv=$(nix path-info --derivation ".#${{ matrix.app-name }}")
+          nix-store --query --requisites --include-outputs "$drv" \
+            | grep -v '\.drv$' \
+            | while read -r p; do [ -e "$p" ] && echo "$p"; done \
+            | attic push --stdin "ci:$ATTIC_CACHE"

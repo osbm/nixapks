@@ -23,6 +23,7 @@ env:
   ATTIC_CACHE: nixapks
   # reached over tailscale, the tailnet ACL lets tag:ci see port 7080 only
   ATTIC_ENDPOINT: http://pochita.curl-boga.ts.net:7080
+  ATTIC_PUBLIC_KEY: nixapks:XTWx83aq4yXEEiyC2Iv6h8yYJIB9RxF7DIVtV5sUBZk=
 
 jobs:
   generate-matrix:
@@ -83,6 +84,9 @@ jobs:
     env:
       # empty on fork and dependabot PRs (no secrets there): those build uncached
       ATTIC_TOKEN: ${{ secrets.ATTIC_TOKEN }}
+      # the cache is only reachable over the tailnet, so the attic token alone
+      # is useless without the tailscale oauth client
+      USE_CACHE: ${{ secrets.ATTIC_TOKEN != '' && secrets.TS_OAUTH_SECRET != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -99,7 +103,7 @@ jobs:
             build-dir = /nix/build
 
       - name: Join the tailnet
-        if: env.ATTIC_TOKEN != ''
+        if: env.USE_CACHE == 'true'
         uses: tailscale/github-action@v3
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
@@ -108,13 +112,19 @@ jobs:
           hostname: runner-github-nixapks
 
       - name: Use the attic cache
-        if: env.ATTIC_TOKEN != ''
+        if: env.USE_CACHE == 'true'
         run: |
           # "via DERP" here means the link to pochita is relayed and will be slow
           tailscale ping -c 3 pochita || true
-          nix profile install --inputs-from . nixpkgs#attic-client
-          attic login ci "$ATTIC_ENDPOINT" "$ATTIC_TOKEN"
-          attic use "ci:$ATTIC_CACHE"
+          # not `attic use`: that would point nix at the server's public
+          # api-endpoint (nginx on another tailnet host), while the tag:ci ACL
+          # only reaches pochita:7080. the cache is public, reads need no token.
+          sudo tee -a /etc/nix/nix.conf <<EOF
+          extra-substituters = $ATTIC_ENDPOINT/$ATTIC_CACHE
+          extra-trusted-public-keys = $ATTIC_PUBLIC_KEY
+          EOF
+          sudo systemctl restart nix-daemon || true
+          nix store info --store "$ATTIC_ENDPOINT/$ATTIC_CACHE"
 
       - name: Build package
         run: |
@@ -130,8 +140,10 @@ jobs:
 
       - name: Push to the attic cache
         # pull requests only read the cache, they never write to it
-        if: env.ATTIC_TOKEN != '' && github.event_name != 'pull_request'
+        if: env.USE_CACHE == 'true' && github.event_name != 'pull_request'
         run: |
+          nix profile install --inputs-from . nixpkgs#attic-client
+          attic login ci "$ATTIC_ENDPOINT" "$ATTIC_TOKEN"
           # push the whole build closure, not just the apk: the thousands of
           # maven dependency fetches are what makes a rebuild slow. paths that
           # cache.nixos.org already serves are skipped by attic.

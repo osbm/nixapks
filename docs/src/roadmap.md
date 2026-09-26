@@ -27,6 +27,6 @@ The thing is, I am a very shitty developer. And my capabilities are extremely li
 - [ ] Check if the apk can be installed (hopefully on multiple architectures) (blocked on signing, see above)
 - [x] Check if the output derivation has any runtime dependencies (it should not) — enforced at build time with `allowedReferences = [ ]`, see [Derivation metadata](derivation-metadata.md#no-runtime-dependencies)
 - [ ] Check if the app got an update (maybe from fdroid or github releases) and create a PR automatically.
-- [ ] Add binary cache
+- [x] Add binary cache — self-hosted [attic](https://github.com/zhaofengli/attic) cache `nixapks`, CI pushes every build closure to it and pulls from it, reached over tailscale (see `.github/workflows/build.yml`)
 - [ ] Prepare reproducibility report
 - [ ] Compile an application without using any maven repository (fetch all dependencies from their respective sources and compile them into jar files and feed the resulting jars to the apk build process) (this is probably impossible but worth a try) (in progress: see the [nixjars project](https://github.com/osbm/nixapks/tree/main/java) in `java/`)

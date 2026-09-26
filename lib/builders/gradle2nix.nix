@@ -48,6 +48,9 @@
         ANDROID_HOME = "${android-sdk}/share/android-sdk";
         ANDROID_SDK_ROOT = "${android-sdk}/share/android-sdk";
 
+        # an APK must not have runtime dependencies (see lib/default.nix)
+        allowedReferences = [ ];
+
         gradleBuildFlags = [
           gradleTask
           "-Dorg.gradle.project.android.aapt2FromMavenOverride=${android-sdk}/share/android-sdk/build-tools/36.0.0/aapt2"

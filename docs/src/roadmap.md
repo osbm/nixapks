@@ -25,7 +25,7 @@ The thing is, I am a very shitty developer. And my capabilities are extremely li
 - [x] Verify built apks against their declared metadata (`tests.meta` runs `aapt2 dump badging` and compares with `meta.android`, in CI for every app)
 - [ ] Design an APK signing mechanism: zipalign + apksigner wrapper with a user-supplied keystore, so outputs are actually installable. Then add `apksigner verify` to the apk verifier, and after that an emulator-based `adb install` smoke test.
 - [ ] Check if the apk can be installed (hopefully on multiple architectures) (blocked on signing, see above)
-- [ ] Check if the output derivation has any runtime dependencies (it should not)
+- [x] Check if the output derivation has any runtime dependencies (it should not) — enforced at build time with `allowedReferences = [ ]`, see [Derivation metadata](derivation-metadata.md#no-runtime-dependencies)
 - [ ] Check if the app got an update (maybe from fdroid or github releases) and create a PR automatically.
 - [ ] Add binary cache
 - [ ] Prepare reproducibility report

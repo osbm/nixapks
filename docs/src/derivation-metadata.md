@@ -68,3 +68,22 @@ A list of supported ABIs (Application Binary Interfaces) for the application. Co
 - `x86`
 - `x86_64`
 
+
+## No runtime dependencies
+
+An APK is a self-contained file: it must not reference any Nix store path.
+This is not a convention but a build-time guarantee. Every package under
+`apks/` is given `allowedReferences = [ ]` (in `lib/default.nix`; the
+gradle2nix builder sets it itself), so Nix refuses to register an output
+that refers to the store:
+
+```
+error: output '/nix/store/…-fossify-calculator-1.4.0.apk' is not allowed to refer to the following paths:
+```
+
+Nothing has to be added to a package for this, and there is no separate CI
+step: any `nix build` of an app, locally or in CI, is the check. If it ever
+triggers, look for a store path leaking into the apk (a hard-coded tool path
+in a generated file, a copied symlink, ...). Avoid `buildInputs` in APK
+packages — evaluation warns about them — and put tools in
+`nativeBuildInputs`.

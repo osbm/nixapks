@@ -69,7 +69,20 @@
           (
             lib.warnIf (pkg.buildInputs or [ ] != [ ] || pkg.propagatedBuildInputs or [ ] != [ ])
               "APK ${name} has (propagated)buildInputs which cause runtime dependencies. APKs should have none."
-              pkg
+              # An APK must be self-contained: no runtime dependencies at all.
+              # allowedReferences = [ ] makes nix fail the build if the output
+              # references any store path, so this is enforced for every app
+              # on every build (CI included), not just warned about.
+              # Builders whose tests are not tied to finalPackage (gradle2nix)
+              # set it themselves, otherwise tests would rebuild the apk.
+              (
+                if pkg ? allowedReferences then
+                  pkg
+                else
+                  pkg.overrideAttrs (_: {
+                    allowedReferences = [ ];
+                  })
+              )
           );
     in
     lib.mapAttrs (

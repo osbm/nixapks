@@ -4,7 +4,6 @@
   lib,
   abi ? "arm64-v8a", # "armeabi-v7a", "x86", "x86_64"
   flavor ? "full", # "amazon", "play"
-  # debug/release currently only debug
   ...
 }:
 let
@@ -31,6 +30,19 @@ let
         ]
       '';
     }).gradle-init;
+  # gradle task names capitalise the flavor: assembleFullRelease
+  flavorTask = (lib.toUpper (lib.substring 0 1 flavor)) + (lib.substring 1 (-1) flavor);
+  # upstream gives every ABI split its own versionCode:
+  # <abi digit> * 100000000 + defaultConfig.versionCode (AnkiDroid/build.gradle)
+  abiDigit =
+    {
+      "armeabi-v7a" = 1;
+      "x86" = 2;
+      "arm64-v8a" = 3;
+      "x86_64" = 4;
+    }
+    .${abi};
+  baseVersionCode = 22401300;
 in
 pkgs.stdenv.mkDerivation (finalAttrs: {
   name = "ankidroid-${flavor}-${abi}-${finalAttrs.version}.apk";
@@ -67,26 +79,32 @@ pkgs.stdenv.mkDerivation (finalAttrs: {
     # Ensure AAPT2 has a writable directory
     mkdir -p $TMPDIR/aapt2
     export AAPT2_DAEMON_DIR=$TMPDIR/aapt2
-    # Increase JVM heap space for Gradle
-    export GRADLE_OPTS="-Xmx6144m -XX:MaxMetaspaceSize=1024m"
   '';
 
+  # Release build: without KEYSTOREPATH upstream signs with its public
+  # tools/fallback-release-keystore.jks, so no secrets are needed. R8 needs far
+  # more heap than upstream's 3G default (GC thrashing otherwise).
   buildPhase = ''
-    gradle assembleDebug --info -I ${gradle-init-script} \
+    runHook preBuild
+
+    gradle assemble${flavorTask}Release --info -I ${gradle-init-script} \
       --offline --full-stacktrace -x lint -x lintDebug -x lintRelease -x test --no-daemon \
       -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/36.0.0/aapt2 \
       -Dfile.encoding=utf-8 \
-      -PbuildTime=1788209187
+      -PbuildTime=1788209187 \
+      "-Dorg.gradle.jvmargs=-Xmx10g -XX:MaxMetaspaceSize=1g"
+
+    runHook postBuild
   '';
 
   installPhase = ''
-    cp AnkiDroid/build/outputs/apk/${flavor}/debug/AnkiDroid-${flavor}-${abi}-debug.apk $out
+    runHook preInstall
+    cp AnkiDroid/build/outputs/apk/${flavor}/release/AnkiDroid-${flavor}-${abi}-release.apk $out
+    runHook postInstall
   '';
   passthru.tests.meta = lib.verifyApkMeta {
     apk = finalAttrs.finalPackage;
     sdk = android-sdk;
-    # debug buildType appends a versionNameSuffix
-    version = "${finalAttrs.version}-debug";
   };
 
   meta = {
@@ -97,8 +115,8 @@ pkgs.stdenv.mkDerivation (finalAttrs: {
     android = {
       minSdk = 24;
       targetSdk = 35;
-      # debug buildType, which applies an applicationIdSuffix
-      applicationId = "com.ichi2.anki.debug";
+      applicationId = "com.ichi2.anki";
+      versionCode = abiDigit * 100000000 + baseVersionCode;
       abis = [ abi ];
     };
     sourceProvenance = [

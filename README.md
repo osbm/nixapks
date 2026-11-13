@@ -21,7 +21,7 @@ them on ease of adding apps, ease of updating, breakage rate and readability.
 | `buildGradleApkGradle2Nix` | [gradle2nix](https://github.com/tadfisher/gradle2nix), per-app `gradle.lock` | 3 | [fossify-thankyou](apks/fo/fossify-thankyou/package.nix), [aegis](apks/ae/aegis/package.nix), [fossify-phone](apks/fo/fossify-phone/package.nix) |
 | hand-rolled `mkDerivation` (legacy) | gradle-dot-nix called directly, per-app `verification-metadata.xml` | 4 | [ankidroid](apks/an/ankidroid/package.nix), [fossify-calculator](apks/fo/fossify-calculator/package.nix), [fossify-notes](apks/fo/fossify-notes/package.nix), [smouldering_durtles](apks/sm/smouldering_durtles/package.nix) |
 | hand-rolled React Native / Expo (no builder yet) | pnpm `fetchPnpmDeps` + gradle-dot-nix (per-app `verification-metadata.xml`, expo local maven repos), React Native and Hermes from source | 1 | [bluesky](apks/bl/bluesky/package.nix) |
-| `buildFlutterApk` | pub2nix from `pubspec.lock.json` + gradle-dot-nix, per-app `verification-metadata.xml` | 1 | [wger](apks/wg/wger/package.nix) |
+| `buildFlutterApk` | pub2nix from `pubspec.lock.json` + gradle-dot-nix, per-app `verification-metadata.xml` | 2 | [wger](apks/wg/wger/package.nix), [obtainium](apks/ob/obtainium/package.nix) |
 
 # Notes
 

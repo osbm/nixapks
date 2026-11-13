@@ -163,7 +163,7 @@ gradle -p android -M sha256 :app:assembleRelease \
   -Dorg.gradle.project.android.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/<version>/aapt2
 ```
 
-with Gradle 8 (see below). The result is
+with the Gradle major the app needs (see below). The result is
 `android/gradle/verification-metadata.xml`. Making the pub cache read-only
 (`chmod -R a-w $PUB_CACHE`) before the Gradle run reproduces the sandbox
 faithfully: every plugin that tries to write into its own directory fails
@@ -175,15 +175,18 @@ here first.
   build (`includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")`)
   and writes its own build output next to its sources. The builder gives
   Gradle an `lndir` copy of the SDK in `$TMPDIR` instead of the store path.
-- **Gradle 8, not 9.** Every Flutter plugin becomes a Gradle subproject
-  whose directory is the pub package — a read-only store path in the
-  sandbox. Gradle 9 refuses to configure projects in read-only directories
-  (`Configuring project ':x' without an existing directory is not allowed`);
-  Gradle 8.14 only warns. Use `pkgs.gradle_8` (the default) even if the
-  upstream wrapper pins 9.
+- **Writable plugin copies.** Every Flutter plugin becomes a Gradle
+  subproject whose directory is the pub package — a read-only store path in
+  the sandbox. Gradle 9 refuses to configure projects in read-only
+  directories and AGP stages native builds inside them, so the builder
+  copies every pub package that has an `android/` directory to a writable
+  place and points `.dart_tool/package_config.json` there before the
+  Flutter tool derives the plugin list. Pick `gradle` by the app's AGP
+  (`pkgs.gradle_9` for AGP 9, the default `gradle_8` otherwise) and
+  generate the metadata with the same major.
 - **Native plugins.** AGP stages CMake/ndk-build output in
-  `<plugin>/.cxx`, read-only in the sandbox; `lib/builders/flutter-init.gradle`
-  (always passed by the builder) moves it under the root build directory.
+  `<plugin>/.cxx`; `lib/builders/flutter-init.gradle` (always passed by the
+  builder) moves it under the root build directory with everything else.
   Each native plugin also pins its own `ndkVersion` and AGP insists on that
   exact one: list every NDK the plugins ask for in `androidSdkPackages`
   (`grep -rh ndkVersion $PUB_CACHE/hosted/pub.dev/*/android/build.gradle`),

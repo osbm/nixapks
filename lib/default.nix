@@ -12,6 +12,7 @@
     inherit ((prev.callPackage ./builders/gradle2nix.nix { inherit inputs; }))
       buildGradleApkGradle2Nix
       ;
+    inherit ((prev.callPackage ./builders/flutter.nix { inherit inputs; })) buildFlutterApk;
     inherit ((prev.callPackage ./builders/verify-apk-meta.nix { })) verifyApkMeta;
   };
 

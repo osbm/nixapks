@@ -38,12 +38,14 @@
         let
           builders = prev.callPackage ./lib/builders/gradle-dot-nix.nix { inherit inputs; };
           g2n = prev.callPackage ./lib/builders/gradle2nix.nix { inherit inputs; };
+          flutterBuilders = prev.callPackage ./lib/builders/flutter.nix { inherit inputs; };
           verifiers = prev.callPackage ./lib/builders/verify-apk-meta.nix { };
         in
         {
           lib = prev.lib // {
             inherit (builders) buildGradleApkGradleDotNix buildGradleApkCentralizedLock;
             inherit (g2n) buildGradleApkGradle2Nix;
+            inherit (flutterBuilders) buildFlutterApk;
             inherit (verifiers) verifyApkMeta;
           };
         };

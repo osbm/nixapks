@@ -16,7 +16,7 @@ The thing is, I am a very shitty developer. And my capabilities are extremely li
     - [x] applicationID (the unique identifier of the app, e.g. com.example.app)
 - [x] Check the meta field
 - [x] Add documentation on github pages.
-- [ ] Add first flutter app.
+- [x] Add first flutter app. (wger)
 - [x] Add first react-native app. (bluesky)
 - [ ] Add first ionic app.
 - [ ] Support building apps on more platforms (currently only x86_64-linux is supported)

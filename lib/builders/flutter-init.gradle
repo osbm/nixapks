@@ -1,0 +1,14 @@
+// Flutter plugins are Gradle subprojects whose project directory is the pub
+// package itself: a read-only store path in the sandbox. AGP's external
+// native build (CMake / ndk-build) stages into <projectDir>/.cxx by default,
+// so move that under the root build directory, where everything else
+// already goes (the Flutter Gradle plugin puts subprojects' buildDir there).
+allprojects {
+    def relocate = {
+        def staging = new File(rootProject.buildDir, "cxx/${project.name}")
+        project.android.externalNativeBuild.cmake.buildStagingDirectory = staging
+        project.android.externalNativeBuild.ndkBuild.buildStagingDirectory = staging
+    }
+    pluginManager.withPlugin("com.android.library", { relocate() })
+    pluginManager.withPlugin("com.android.application", { relocate() })
+}

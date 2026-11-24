@@ -29,6 +29,8 @@ lib.buildFlutterApk {
   androidSdkPackages =
     sdkPkgs: with sdkPkgs; [
       build-tools-37-0-0
+      # AGP 9.2 default build-tools
+      build-tools-36-0-0
       cmdline-tools-latest
       platform-tools
       platforms-android-37-0
